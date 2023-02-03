@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "migrate-make": "knex migrate:make init --knexfile ./src/config/knexfile.ts",
+    "migrate": "knex migrate:latest --knexfile ./src/config/knexfile.ts",
+    "migrate-down": "knex migrate:down --knexfile ./src/config/knexfile.ts",
+    "seed-make": "knex seed:make dev --knexfile ./src/config/knexfile.ts  ",
+    "seed": "knex seed:run --knexfile ./src/config/knexfile.ts"
   },
   "keywords": [],
   "author": "",
