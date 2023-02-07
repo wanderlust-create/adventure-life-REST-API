@@ -9,3 +9,6 @@ export interface EventSourceData {
   city: string;
   country: string;
 }
+export function isInteger(input:string) {
+  return input?.match(/^\d+$/) ?? false
+}
