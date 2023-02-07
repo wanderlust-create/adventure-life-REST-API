@@ -25,7 +25,7 @@ async function startServer() {
 
   app.listen(config.PORT, () => {
     logger.info(`
-      👍 🎁 🎉  Charter Spectrum REST API listening at http://localhost:${config.PORT} 🎉 🎁  👍 
+      👍 🎁 🎉  Adventure Life REST API listening at http://localhost:${config.PORT} 🎉 🎁  👍 
    
     `);
   });
