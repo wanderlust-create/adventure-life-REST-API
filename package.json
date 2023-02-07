@@ -8,7 +8,12 @@
     "migrate": "knex migrate:latest --knexfile ./src/config/knexfile.ts",
     "migrate-down": "knex migrate:down --knexfile ./src/config/knexfile.ts",
     "seed-make": "knex seed:make dev --knexfile ./src/config/knexfile.ts  ",
-    "seed": "knex seed:run --knexfile ./src/config/knexfile.ts"
+    "seed": "knex seed:run --knexfile ./src/config/knexfile.ts",
+    "clean": "rimraf dist",
+    "build": "tsc",
+    "start-server": "node dist/server.js",
+    "start-dev-server": "tsc-watch --onSuccess \"node dist/server.js\"",
+    "dev": "npm-run-all clean build start-dev-server"
   },
   "keywords": [],
   "author": "",
