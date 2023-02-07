@@ -1,0 +1,38 @@
+[
+  {
+    "first_name": "Sinead",
+    "last_name": "Seto",
+    "email": "Sinead@email.com",
+    "trips": ["Amsterdam", "San Francisco", "New York", "Delhi"]
+  },
+  {
+    "first_name": "Ruolan",
+    "last_name": "Ablog",
+    "email": "Ruolan@email.com",
+    "trips": ["Delhi", "New York", "Porto", "Mexico City"]
+  },
+  {
+    "first_name": "Stansie",
+    "last_name": "Narayan",
+    "email": "Stansie@email.com",
+    "trips": ["Amsterdam", "New York", "Porto"]
+  },
+  {
+    "first_name": "Filip",
+    "last_name": "Chahine",
+    "email": "Filip@email.com",
+    "trips": ["San Francisco", "Porto", "Amsterdam", "Mexico City"]
+  },
+  {
+    "first_name": "Fletcher",
+    "last_name": "Sandhu",
+    "email": "Fletcher@email.com",
+    "trips": ["San Francisco", "Delhi"]
+  },
+  {
+    "first_name": "Shelby",
+    "last_name": "Cortez",
+    "email": "Shelby@email.com",
+    "trips": ["Delhi", "Mexico City", "Porto", "Amsterdam", "New York"]
+  }
+]
