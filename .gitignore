@@ -1,6 +1,10 @@
 # Dependency directories
 node_modules
 
+# Logs
+logs
+*.log
+
 # misc
 dist
 .env
