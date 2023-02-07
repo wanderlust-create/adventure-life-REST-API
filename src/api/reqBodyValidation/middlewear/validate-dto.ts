@@ -7,7 +7,7 @@ export default function validateDto(schema) {
     logger.info(`VALIDATE_DTO:req body is: ${req.body}`);
     try {
       const validatedBodyData = await schema.validate(req.body);
-      // replave req body with verified values
+      // replace req body with verified values
       req.body = validatedBodyData;
       next();
     } catch (err) {
