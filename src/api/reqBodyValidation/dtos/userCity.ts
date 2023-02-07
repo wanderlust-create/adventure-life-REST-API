@@ -1,8 +1,8 @@
-const yup = require("yup");
+import yup from "yup";
 
-const packageNetworkDto = yup.object().shape({
-  packageId: yup.number().required(),
-  networkId: yup.number().required(),
+const userCityDto = yup.object().shape({
+  userId: yup.number().required(),
+  cityId: yup.number().required(),
 });
 
-export default packageNetworkDto;
+export default userCityDto;
