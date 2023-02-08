@@ -16,17 +16,23 @@ import api from "./api";
 import setupDb from "./loaders/dbSetup";
 setupDb();
 
+// error handling
+import apiErrorHandler from "./api/reqBodyValidation/error/apiErrorHandler";
+
+// Swagger docs
+import swaggerDocs from "./loaders/swagger";
 
 async function startServer() {
   const app = express();
   app.use(express.json());
   app.use(morgan("combined"));
   app.use("/", api);
+  app.use(apiErrorHandler);
 
   app.listen(config.PORT, () => {
+    swaggerDocs(app, config.PORT);
     logger.info(`
-      👍 🎁 🎉  Adventure Life REST API listening at http://localhost:${config.PORT} 🎉 🎁  👍 
-   
+      🎆 🚕 ✈️  Adventure Life REST API listening at http://localhost:${config.PORT} ✈️ 🚕 🎆
     `);
   });
 }
