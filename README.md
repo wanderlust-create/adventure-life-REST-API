@@ -1,6 +1,6 @@
 ![adventure-life-logo](https://user-images.githubusercontent.com/67713820/217662321-e2c81fdc-3b12-4522-aaab-9063a7fd75de.png)
 <p align="center">
-<h1>This app serves as a RESTful API for My Adventure database </h1>
+<h1>This app serves as a RESTful API for Adventure Life database </h1>
     <br> 
 </p>
 
@@ -71,7 +71,7 @@
 ----------
 ## 💼 API Documentation  <a name = "api-docs"></a>
 
-### Data returned from API:
+### Data returned from Adventure Life API:
 
 #### For Adventure Life Cities:
 - List all cities
@@ -89,14 +89,14 @@
 - Update an event
 - Delete an event with id
 
-#### For Charter Spectrum User:
+#### For Adventure Life Users:
 - List all users
 - Get a user with an id
 - Create a user
 - Update a user
 - Delete a user
 
-#### For CAdventure Life User Cities (joins table):
+#### For Adventure Life UserCities (joins table):
 - List all user cities
 - Create a user city with a userId and cityId
 - Delete a user city
