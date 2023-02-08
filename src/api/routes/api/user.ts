@@ -17,22 +17,27 @@ export default (app: Router) => {
    *       type: object
    *       required:
    *         - id
-   *         - name
-   *         - price
+   *         - firstName
+   *         - lastName
+   *         - email
    *       properties:
    *         id:
    *           type: number
    *           description: The auto-generated id of the user
-   *         name:
+   *         firstName:
    *           type: string
-   *           description: The user name
-   *         price:
-   *           type: number
-   *           description: monthly subscription price
+   *           description: The user's first name
+   *         lastName:
+   *           type: string
+   *           description: The user's last name
+   *         email:
+   *           type: string
+   *           description: The user's email address
    *       example:
    *         id: 4
-   *         name: Silver
-   *         price: 27.9
+   *         firstName: Stansie
+   *         lastName: Narayan
+   *         email: Stansie@email.com
    *     UserArray:
    *       type: array
    *       items:
@@ -41,16 +46,20 @@ export default (app: Router) => {
    *         id:
    *           type: number
    *           description: The auto-generated id of the user
-   *         name:
+   *         firstName:
    *           type: string
-   *           description: The user name
-   *         price:
-   *           type: number
-   *           description: monthly subscription price
-   *         example: {
-   *           id: 2,
-   *           name: Silver,
-   *           price: 27.9}
+   *           description: The user's first name
+   *         lastName:
+   *           type: string
+   *           description: The user's last name
+   *         email:
+   *           type: string
+   *           description: The user's email address
+   *         example:
+   *           id: 4
+   *           firstName: Stansie
+   *           lastName: Narayan
+   *           email: Stansie@email.com
    *
    */
 
@@ -58,7 +67,7 @@ export default (app: Router) => {
    * @swagger
    * tags:
    *   name: Users
-   *   description: Charter Spectrum Users
+   *   description: Adventure Life Users
    */
 
   /**
@@ -123,8 +132,9 @@ export default (app: Router) => {
    *           schema:
    *             $ref: '#/components/schemas/User'
    *           example:
-   *             name: Silver
-   *             price: 27.9
+   *             firstName: Sinead
+   *             lastName: Seto
+   *             email: Sinead@email.com
    *     responses:
    *       200:
    *         description: The user was successfully created
@@ -159,7 +169,7 @@ export default (app: Router) => {
    *          schema:
    *            $ref: '#/components/schemas/User'
    *          example:
-   *             name: Preferred
+   *             lastName: Corceda
    *    responses:
    *      200:
    *        description: The user was updated
