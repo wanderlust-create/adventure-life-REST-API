@@ -27,11 +27,11 @@ async function getEventById(id: string) {
     .withGraphFetched("city");
 }
 async function filterEventsByCityId(cityId: string) {
-  logger.debug(`Entering FILTER BY NETWORK DAO- events/ endpoint ${cityId}`);
+  logger.debug(`Entering FILTER BY CITY DAO- events/ endpoint ${cityId}`);
   return Event.query().select("id", "title").where("cityId", cityId);
 }
 async function filterEventsByUserId(userId: string) {
-  logger.debug(`Entering FILTER BY PACKAGE DAO- events/ endpoint ${userId}`);
+  logger.debug(`Entering FILTER BY USER DAO- events/ endpoint ${userId}`);
   return User.query()
     .findById(userId)
     .column("id", "firstName", "lastName")
