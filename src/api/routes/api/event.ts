@@ -176,7 +176,7 @@ export default (app: Router) => {
    *          schema:
    *            $ref: '#/components/schemas/Event'
    *          example:
-   *             imbdRating: 9.2
+   *            imdbRating: 9.2
    *    responses:
    *      200:
    *        description: The event was updated
