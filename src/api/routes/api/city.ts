@@ -28,10 +28,11 @@ export default (app: Router) => {
    *           description: The city name
    *         country:
    *           type: string
-   *           description: The coutry the city is located in
+   *           description: The country name
    *       example:
-   *         id: 10
-   *         name: Nickelodeon
+   *         id: 6
+   *         name: Amsterdam
+   *         country: the Netherlands
    *     CityArray:
    *       type: array
    *       items:
@@ -43,10 +44,15 @@ export default (app: Router) => {
    *         name:
    *           type: string
    *           description: The city name
-   *         example: {
-   *           id: 10,
-   *           name: Nickelodeon}
+   *         country:
+   *           type: string
+   *           description: The country name
+   *         example: 
+   *           id: 6
+   *           name: Amsterdam
+   *           country: the Netherlands
    */
+
   /**
    * @swagger
    * tags:
@@ -68,7 +74,7 @@ export default (app: Router) => {
    *             schema:
    *                 type: array
    *                 items:
-   *                  $ref: '#/components/schemas/City'
+   *                  $ref: '#/components/schemas/CityArray'
    *
    *       404:
    *         description: Cities were not found
@@ -117,7 +123,8 @@ export default (app: Router) => {
    *           schema:
    *             $ref: '#/components/schemas/City'
    *           example:
-   *             name: Nickelodeon
+   *             name: Denver
+   *             country: USA
    *     responses:
    *       200:
    *         description: The city was successfully created
@@ -152,7 +159,7 @@ export default (app: Router) => {
    *          schema:
    *            $ref: '#/components/schemas/City'
    *          example:
-   *            name: STARZ
+   *            name: Lisbon
    *    responses:
    *      200:
    *        description: The city was updated
