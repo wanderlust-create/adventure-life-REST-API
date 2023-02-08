@@ -19,11 +19,11 @@ async function listEvents(
   logger.debug(`Entering GET CONTROLLER - events/ endpoint.`);
   type ReturnValue = User | Event[];
   let events: ReturnValue = [];
-  if (req.query.city_id) {
-    let cityId = req.query.city_id as string;
+  if (req.query.cityId) {
+    let cityId = req.query.cityId as string;
     events = await EventService.filterEventsByCityId(cityId);
-  } else if (req.query.user_id) {
-    let userId = req.query.user_id as string;
+  } else if (req.query.userId) {
+    let userId = req.query.userId as string;
     events = await EventService.filterEventsByUserId(userId);
   } else {
     events = await EventService.listAllEvents();
