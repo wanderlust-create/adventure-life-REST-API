@@ -1,6 +1,6 @@
 ![adventure-life-logo](https://user-images.githubusercontent.com/67713820/217662321-e2c81fdc-3b12-4522-aaab-9063a7fd75de.png)
 <p align="center">
-<h1>This app serves as a RESTful API for Adventure Life database </h1>
+<h1>This app serves as a RESTful API for the -fictitious- Adventure Life database </h1>
     <br> 
 </p>
 
