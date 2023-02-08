@@ -15,7 +15,7 @@ export default function validateDto(schema) {
   return async (req: Request, res: Response, next: NextFunction) => {
     logger.debug(`VALIDATE_DTO:req body is: ${req.body}`);
     try {
-      const validatedBodyData = schema.$validate(req.body);
+      const validatedBodyData = await schema.validate(req.body);
       // replace req body with verified values
       req.body = validatedBodyData;
       logger.debug(`AFTER VALIDATION :req body is: ${req.body}`);
