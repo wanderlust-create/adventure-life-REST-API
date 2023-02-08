@@ -29,14 +29,10 @@ export default (app: Router) => {
    *         title:
    *           type: string
    *           description: The event title
-   *         imdbRating:
-   *           type: number
-   *           description: The event's IMDb rating
    *       example:
-   *         id: 22
-   *         city_id: 1
-   *         title: Zoey's Extraordinary Playlist
-   *         imdbRating: 8.1
+   *         id: 19
+   *         city_id: 5
+   *         title: Basilica de Santa Maria de Guadalupe
    *     EventArray:
    *       type: array
    *       items:
@@ -51,14 +47,10 @@ export default (app: Router) => {
    *         title:
    *           type: string
    *           description: The event title
-   *         ibmdRating:
-   *           type: number
-   *           description: The event IMBd rating
-   *         example: {
-   *           id: 22,
-   *           city_id: 1,
-   *           title: Zoey's Extraordinary Playlist,
-   *           imdbRating: 8.1}
+   *         example:
+   *           id: 19
+   *           city_id: 5
+   *           title: Basilica de Santa Maria de Guadalupe
    */
 
   /**
@@ -139,9 +131,8 @@ export default (app: Router) => {
    *           schema:
    *             $ref: '#/components/schemas/Event'
    *           example:
-   *             title: Zoey's Extraordinary Playlist
-   *             cityId: 8
-   *             imdbRating: 8.1
+   *             title: The Amber Museum
+   *             cityId: 3
    *     responses:
    *       200:
    *         description: The event was successfully created
@@ -176,7 +167,7 @@ export default (app: Router) => {
    *          schema:
    *            $ref: '#/components/schemas/Event'
    *          example:
-   *            imdbRating: 9.2
+   *            title: The Jade Museum
    *    responses:
    *      200:
    *        description: The event was updated
