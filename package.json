@@ -15,6 +15,10 @@
     "start-dev-server": "tsc-watch --onSuccess \"node dist/src/server.js\"",
     "dev": "npm-run-all clean build start-dev-server"
   },
+  "engines": {
+    "node": "19.1.0",
+    "npm": "18.9.3"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
