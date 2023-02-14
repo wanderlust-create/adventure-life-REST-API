@@ -61,7 +61,7 @@
 
 #### Database seeding:
 
-1. In `src.db/sources` you will find files that can be used for seeding the database. Make sure that the database and coorsponding tables have been created before executing the seed script. 
+1. In `src/db/sources` you will find files that can be used for seeding the database. Make sure that the database and coorsponding tables have been created before executing the seed script. 
 2. You can now load the script via a npm command: `npm run seed`. 
 
 ----------
