@@ -14,7 +14,6 @@ import api from "./api";
 
 // Set up database access
 import setupDb from "./loaders/dbSetup";
-setupDb();
 
 // error handling
 import apiErrorHandler from "./api/reqBodyValidation/error/apiErrorHandler";
@@ -23,6 +22,7 @@ import apiErrorHandler from "./api/reqBodyValidation/error/apiErrorHandler";
 import swaggerDocs from "./loaders/swagger";
 
 async function startServer() {
+  setupDb();
   const app = express();
   app.use(express.json());
   app.use(morgan("combined"));
