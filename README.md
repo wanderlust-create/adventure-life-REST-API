@@ -106,7 +106,7 @@
 
 #### You can import a Postman collection by either:
 1. Import the JSON doc on `http://localhost:<your_local_PORT>/api-docs.json` when connected to your local network
-2. Import the document stored in `src/api/docs`
+2. Import the document stored in `src/docs`
 ----------
 
 ## Contributor   <a name = "contributor"></a>
