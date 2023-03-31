@@ -6,6 +6,6 @@ module.exports = {
   verbose: true, //Should each individual test be reported when run
   forceExit: true, // exit even if pending handlers
   clearMocks: true,
-  // globalSetup: "**/**/**/global-setup.ts",
-  // globalTeardown: "**/**/**/global-teardown.ts",
+  globalSetup: "'<rootDir>/src/_tests_/global-setup.ts'",
+  globalTeardown: "<rootDir>/src/_tests_/global-teardown.ts",
 };
