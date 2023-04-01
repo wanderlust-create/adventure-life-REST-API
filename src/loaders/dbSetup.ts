@@ -1,19 +1,24 @@
+// import knex from "knex";
+// import { Model } from "objection";
+
+// import knexConfig from "../config/knexfile";
+// import config from "../config/index";
+
+// const environment = config.NODE_ENV || "development";
+
+// const connectionConfig = knexConfig[environment];
+
+// const db = knex(connectionConfig);
+
+// Model.knex(db);
+// export default db;
+
 import knex from "knex";
 import { Model } from "objection";
-import logger from "./logger"
 
 import knexConfig from "../config/knexfile";
 
-
-async function setupDb() {
+export default function db() {
   const db = knex(knexConfig.development);
-  try {
-    Model.knex(db);
-    logger.info("DB connected");
-  } catch (error) {
-    logger.error("Could not connect to db");
-    process.exit(1);
-  }
+  Model.knex(db);
 }
-
-export default setupDb;

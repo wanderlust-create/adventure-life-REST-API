@@ -1,5 +1,5 @@
 {
-  "name": "adventure-life",
+  "name": "adventure-life-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,12 +9,14 @@
     "migrate-down": "knex migrate:down --knexfile ./src/config/knexfile.ts",
     "seed-make": "knex seed:make dev --knexfile ./src/config/knexfile.ts  ",
     "seed": "knex seed:run --knexfile ./src/config/knexfile.ts",
+    "yolo": "npm-run-all migrate-down migrate seed",
     "clean": "rimraf dist",
     "build": "tsc",
     "start-server": "node dist/app.js",
     "start-dev-server": "tsc-watch --onSuccess \"node dist/src/app.js\"",
     "start": "npm-run-all clean build start-dev-server",
     "test": "jest"
+    
   },
   "engines": {
     "node": "19.1.0",
