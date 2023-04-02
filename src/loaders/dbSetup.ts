@@ -1,24 +1,13 @@
-// import knex from "knex";
-// import { Model } from "objection";
-
-// import knexConfig from "../config/knexfile";
-// import config from "../config/index";
-
-// const environment = config.NODE_ENV || "development";
-
-// const connectionConfig = knexConfig[environment];
-
-// const db = knex(connectionConfig);
-
-// Model.knex(db);
-// export default db;
-
-import knex from "knex";
 import { Model } from "objection";
+import knex from "knex";
 
 import knexConfig from "../config/knexfile";
+import config from "../config/index";
 
-export default function db() {
-  const db = knex(knexConfig.development);
-  Model.knex(db);
-}
+const env = config.NODE_ENV || "development";
+
+const connection = knex(knexConfig[env]);
+
+Model.knex(connection);
+
+export default connection;
