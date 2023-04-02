@@ -16,7 +16,7 @@ async function listAllUserCities(
   const userCities = await UserCityService.listAllUserCities();
   try {
     if (!userCities) {
-      res.sendStatus(404).json({ error: `No user-cities found` });
+      res.status(404).json({ error: `No user-cities found` });
       return;
     } else {
       res.json(userCities);
@@ -31,12 +31,10 @@ async function createUserCity(
   res: express.Response
 ): Promise<void> {
   logger.debug(`Entering CREATE CONTROLLER - user-cities endpoint.`);
-  const newUserCity = await UserCityService.createUserCity(
-    req.body
-  );
+  const newUserCity = await UserCityService.createUserCity(req.body);
   try {
     if (newUserCity === undefined) {
-      res.sendStatus(404).json({ error: `User-city not created` });
+      res.status(404).json({ error: `User-city not created` });
       return;
     } else {
       res.json(newUserCity);
@@ -52,11 +50,10 @@ async function deleteUserCityById(
 ): Promise<void> {
   logger.debug(`Entering DELETE CONTROLLER - user-cities endpoint.`);
   const id = req.params.id;
-  const deletedUserCity =
-    await UserCityService.deleteUserCityById(id);
+  const deletedUserCity = await UserCityService.deleteUserCityById(id);
   try {
     if (deletedUserCity.length === 0) {
-      res.sendStatus(404).json({ error: `User-city not deleted` });
+      res.status(404).json({ error: `User-city not deleted` });
       return;
     } else {
       logger.info("User-City deleted:", deletedUserCity);

@@ -92,7 +92,7 @@ async function deleteUserById(
     const id = req.params.id;
     const deletedUser = await UserService.deleteUserById(id);
     if (deletedUser.length === 0) {
-      res.sendStatus(404).json({ error: "No user deleted" });
+      res.status(404).json({ error: "No user deleted" });
       return;
     } else {
       logger.info("User Deleted:", deletedUser);
