@@ -1,78 +1,31 @@
-import { knexSnakeCaseMappers } from "objection";
 import Knex from "knex";
-import config from "../config";
+import knexfile from "../config/knexfile";
 import logger from "../loaders/logger";
 
-const database = "adventure-test-database";
-
-
-const connectionInfoWithoutDb = {
-  host: "localhost",
-  port: 5432,
-  user: config.DB_USER,
-  password: config.DB_PASSWORD,
-};
-
-const connectionInfoWithDb = {
-  host: "localhost",
-  port: 5432,
-  user: config.DB_USER,
-  password: config.DB_PASSWORD,
-  database: database,
-};
-
-// Create the database
-async function createTestDatabase() {
-  const knex = Knex({
-    client: "pg",
-    connection: {
-      ...connectionInfoWithoutDb,
-    },
-  });
+export default async function setup(): Promise<void> {
+  logger.info("Setting up test database");
 
   try {
-    console.info(`database:${database}`);
-    await knex.raw(`DROP DATABASE IF EXISTS "${database}"`);
-    await knex.raw(`CREATE DATABASE "${database}"`);
-    console.info(`database dropped`);
+    const db = Knex(knexfile.test);
+
+    // Roll back all migrations on the test database
+    await db.migrate.rollback();
+    await db.raw('DROP TABLE IF EXISTS "user_city" CASCADE');
+    await db.raw('DROP TABLE IF EXISTS "event" CASCADE');
+    await db.raw('DROP TABLE IF EXISTS "user" CASCADE');
+    await db.raw('DROP TABLE IF EXISTS "city" CASCADE');
+    logger.info("Migrations rolled back successfully");
+
+    // Run migrations on the test database
+    await db.migrate.latest();
+    logger.info("Migrations run successfully");
+
+    // Seed the test database with data
+    await db.seed.run();
+    logger.info("Seed data inserted successfully");
+
+    global.db = db;
   } catch (error) {
-    throw new Error(error);
-  } finally {
-    await knex.destroy();
+    logger.error(`Error setting up test database: ${error}`);
   }
 }
-
-// Seed the database with schema and data
-async function seedTestDatabase() {
-  const knex = Knex({
-    client: "pg",
-    connection: connectionInfoWithDb,
-    migrations: {
-      directory: "../adventure-life-with-jest/src/db/migrations",
-      tableName: "knex_migrations",
-    },
-    seeds: {
-      directory: "../adventure-life-with-jest/src/db/seeds",
-    },
-    ...knexSnakeCaseMappers(),
-  });
-
-  try {
-    await knex.migrate.latest();
-    console.info("Database migrated successfully")
-    await knex.seed.run();
-    console.info("Database seeded successfully");
-  } catch (error) {
-    throw new Error(error);
-  } 
-}
-module.exports = async () => {
-  try {
-    await createTestDatabase();
-    await seedTestDatabase();
-    console.log("Test database created successfully");
-  } catch (error) {
-    console.log(error);
-    process.exit(1);
-  }
-};

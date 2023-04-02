@@ -1,52 +1,21 @@
-import { knexSnakeCaseMappers } from "objection";
 import Knex from "knex";
-import config from "../config";
+import knexfile from "../config/knexfile";
 import logger from "../loaders/logger";
 
-const database = "adventure-test-database";
-
-const connectionInfoWithoutDb = {
-  host: "localhost",
-  port: 5432,
-  user: config.DB_USER,
-  password: config.DB_PASSWORD,
-};
-
-const connectionInfoWithDb = {
-  host: "localhost",
-  port: 5432,
-  user: config.DB_USER,
-  password: config.DB_PASSWORD,
-  database: database,
-};
-
-// Create the database
-async function deleteTestDatabase() {
-  const knex = Knex({
-    client: "pg",
-    connection: {
-      ...connectionInfoWithDb,
-    },
-  });
+export default async function teardown(): Promise<void> {
+  const db = Knex(knexfile.test);
 
   try {
-    console.info(`database:${database}`);
-    await knex.raw(`DROP DATABASE IF EXISTS "${database}"`);
-    await knex.raw(`CREATE DATABASE "${database}"`);
-    console.info(`database dropped`);
+    // Drop the test database
+    await db.migrate.rollback();
+    await db.raw('DROP TABLE IF EXISTS "user_city" CASCADE');
+    await db.raw('DROP TABLE IF EXISTS "event" CASCADE');
+    await db.raw('DROP TABLE IF EXISTS "user" CASCADE');
+    await db.raw('DROP TABLE IF EXISTS "city" CASCADE');
+    logger.info("Migrations rolled back successfully");
   } catch (error) {
-    throw new Error(error);
-  } finally {
-    await knex.destroy();
+    logger.error(`Error rolling back migrations: ${error}`);
   }
+
+  await db.destroy();
 }
-
-module.exports = async () => {
-  try {
-    await deleteTestDatabase();
-    console.log("Test database created successfully");
-  } catch (error) {
-    console.log(error);
-    process.exit(1);
-  }
-};
