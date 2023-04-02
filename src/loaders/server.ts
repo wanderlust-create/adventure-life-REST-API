@@ -1,3 +1,5 @@
+import { Model } from "objection";
+
 // import express from "express";
 import express from "express";
 
@@ -7,11 +9,15 @@ import morgan from "morgan";
 // Routes
 import api from "../api";
 
+// Db connection
+import connection from "../loaders/dbSetup";
+
 // error handling
 import apiErrorHandler from "../api/reqBodyValidation/error/apiErrorHandler";
 
 function createServer() {
   const app = express();
+  Model.knex(connection);
   app.use(express.json());
   app.use(morgan("combined"));
   app.use("/", api);
