@@ -6,6 +6,17 @@ module.exports = {
   verbose: true, //Should each individual test be reported when run
   forceExit: true, // exit even if pending handlers
   clearMocks: true,
-  // globalSetup: "**/**/**/global-setup.ts",
-  // globalTeardown: "**/**/**/global-teardown.ts",
+  setupFilesAfterEnv: ["jest-extended"],
+  globalSetup: "<rootDir>/src/__tests__/global-setup.ts",
+  globalTeardown: "<rootDir>/src/__tests__/global-teardown.ts",
 };
+
+// module.exports = {
+//   clearMocks: true,
+//   moduleFileExtensions: ["js"],
+//   roots: ["<rootDir>"],
+//   testEnvironment: "node",
+//   setupFilesAfterEnv: ["jest-extended"],
+//   globalSetup: "<rootDir>/src/__tests__/global-setup.ts",
+//   globalTeardown: "<rootDir>/src/__tests__/global-teardown.ts",
+// };

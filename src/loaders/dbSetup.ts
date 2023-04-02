@@ -1,9 +1,13 @@
-import knex from "knex";
 import { Model } from "objection";
+import knex from "knex";
 
 import knexConfig from "../config/knexfile";
+import config from "../config/index";
 
-export default function setupDb() {
-  const db = knex(knexConfig.development);
-  Model.knex(db);
-}
+const env = config.NODE_ENV || "development";
+
+const connection = knex(knexConfig[env]);
+
+Model.knex(connection);
+
+export default connection;

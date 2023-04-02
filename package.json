@@ -1,5 +1,5 @@
 {
-  "name": "adventure-life",
+  "name": "adventure-life-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,12 +9,13 @@
     "migrate-down": "knex migrate:down --knexfile ./src/config/knexfile.ts",
     "seed-make": "knex seed:make dev --knexfile ./src/config/knexfile.ts  ",
     "seed": "knex seed:run --knexfile ./src/config/knexfile.ts",
+    "yolo": "npm-run-all migrate-down migrate seed",
     "clean": "rimraf dist",
     "build": "tsc",
     "start-server": "node dist/app.js",
     "start-dev-server": "tsc-watch --onSuccess \"node dist/src/app.js\"",
     "start": "npm-run-all clean build start-dev-server",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "engines": {
     "node": "19.1.0",
@@ -36,6 +37,8 @@
     "jest-extended": "^3.2.4",
     "nodemon": "^2.0.20",
     "npm-run-all": "^4.1.5",
+    "pg": "^8.10.0",
+    "pg-hstore": "^2.3.4",
     "rimraf": "^4.1.2",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
@@ -49,7 +52,6 @@
     "knex": "^2.4.1",
     "morgan": "^1.10.0",
     "objection": "^3.0.1",
-    "pg": "^8.8.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.0",
     "winston": "^3.8.2",

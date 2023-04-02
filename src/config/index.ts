@@ -28,6 +28,7 @@ const port = findPORT();
 
 export default {
   DB_NAME: process.env.DB_NAME,
+  TEST_DB_NAME: process.env.TEST_DB_NAME,
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_USER: process.env.DB_USER,
   LOG_LEVEL: process.env.LOG_LEVEL || "silly",
