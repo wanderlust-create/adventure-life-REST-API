@@ -15,7 +15,7 @@
     "start-server": "node dist/app.js",
     "start-dev-server": "tsc-watch --onSuccess \"node dist/src/app.js\"",
     "start": "npm-run-all clean build start-dev-server",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "engines": {
     "node": "19.1.0",
