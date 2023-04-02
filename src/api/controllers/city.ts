@@ -92,7 +92,7 @@ async function deleteCityById(
     const id = req.params.id;
     const deletedCity = await CityService.deleteCityById(id);
     if (deletedCity.length === 0) {
-      res.sendStatus(404).json({ error: "No city deleted" });
+      res.status(404).json({ error: "No city found" });
       return;
     } else {
       logger.info("City Deleted:", deletedCity);
