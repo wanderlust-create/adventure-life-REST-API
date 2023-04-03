@@ -12,6 +12,10 @@ export default {
   deleteEventById,
 };
 
+/**
+ * Returns an array of all events, sorted by date.
+ * @returns {Promise<Event[]>} The events.
+ */
 async function listAllEvents() {
   logger.debug(`Entering GET DAO- events/ endpoint.`);
   return Event.query()
@@ -19,17 +23,35 @@ async function listAllEvents() {
     .orderBy("created_at", "desc")
     .withGraphFetched("city");
 }
-async function getEventById(id: string) {
-  logger.debug(`Entering GET BY ID DAO- events/ endpoint ${id}`);
+
+/**
+ * Gets an event by ID.
+ * @param {string} eventId - The ID of the event to get.
+ * @returns {Promise<Event>} The event.
+ */
+async function getEventById(eventId: string) {
+  logger.debug(`Entering GET BY ID DAO- events/ endpoint ${eventId}`);
   return Event.query()
-    .findById(id)
+    .findById(eventId)
     .column("id", "title")
     .withGraphFetched("city");
 }
+
+/**
+ * Filters events by city ID.
+ * @param {string} cityId - The ID of the city to filter by.
+ * @returns {Promise<Event[]>} The events.
+ */
 async function filterEventsByCityId(cityId: string) {
   logger.debug(`Entering FILTER BY CITY DAO- events/ endpoint ${cityId}`);
-  return Event.query().select("id", "title").where("cityId", cityId);
+  return Event.query().select("id", "title", "cityId").where("cityId", cityId);
 }
+
+/**
+ * Filters events by user ID.
+ * @param {string} userId - The ID of the user to filter by.
+ * @returns {Promise<User>} The user, with their associated city and events.
+ */
 async function filterEventsByUserId(userId: string) {
   logger.debug(`Entering FILTER BY USER DAO- events/ endpoint ${userId}`);
   return User.query()
@@ -37,30 +59,49 @@ async function filterEventsByUserId(userId: string) {
     .column("id", "firstName", "lastName")
     .withGraphFetched("[city.[event]]");
 }
-async function createEvent(eventDto: Event) {
-  logger.debug(`Entering CREATE DAO- events/ endpoint ${eventDto}`);
+
+/**
+ * Creates a new event.
+ * @param {Event} eventData - The event data.
+ * @returns {Promise<Event>} The new event.
+ */
+async function createEvent(eventData: Event) {
+  logger.debug(`Entering CREATE DAO- events/ endpoint ${eventData}`);
   const newEvent = await Event.query().insert({
-    cityId: eventDto.cityId,
-    title: eventDto.title,
+    cityId: eventData.cityId,
+    title: eventData.title,
   });
   return newEvent;
 }
-async function updateEventById(id: string, eventDto: Event) {
-  logger.debug(`Entering UPDATE DAO- events/ endpoint ${eventDto}`);
+
+/**
+ * Updates an event by ID.
+ * @param {string} eventId - The ID of the event to update.
+ * @param {Event} eventData - The new event data.
+ * @returns {Promise<Event>} The updated event.
+ */
+async function updateEventById(eventId: string, eventData: Event) {
+  logger.debug(`Entering UPDATE DAO- events/ endpoint ${eventData}`);
   const updatedEvent = await Event.query()
-    .findById(id)
+    .findById(eventId)
     .patch({
-      cityId: eventDto.cityId,
-      title: eventDto.title,
+      cityId: eventData.cityId,
+      title: eventData.title,
     })
     .returning("*");
   return updatedEvent;
 }
-async function deleteEventById(id: string) {
-  logger.debug(`Entering DELETE BY ID DAO- events/ endpoint ${id}`);
+
+/**
+ * Deletes an event by ID.
+ * @param {string} eventId - The ID of the event to delete.
+ * @returns {Promise<Event>} The deleted event.
+ */
+async function deleteEventById(eventId: string) {
+  logger.debug(`Entering DELETE BY ID DAO- events/ endpoint ${eventId}`);
   const deletedEvent = await Event.query()
     .delete()
-    .where({ id })
+    .where({ id: eventId })
     .returning("*");
   return deletedEvent;
 }
