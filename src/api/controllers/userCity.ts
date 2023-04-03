@@ -53,7 +53,7 @@ async function deleteUserCityById(
   const deletedUserCity = await UserCityService.deleteUserCityById(id);
   try {
     if (deletedUserCity.length === 0) {
-      res.status(404).json({ error: `User-city not deleted` });
+      res.status(404).json({ error: `User-city not found` });
       return;
     } else {
       logger.info("User-City deleted:", deletedUserCity);
