@@ -1,8 +1,8 @@
 import * as yup from "yup";
 
 const userCityDto = yup.object().shape({
-  userId: yup.number().required(),
-  cityId: yup.number().required(),
+  userId: yup.string().required(),
+  cityId: yup.string().required(),
 });
 
 export default userCityDto;
