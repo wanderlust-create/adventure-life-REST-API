@@ -1,4 +1,3 @@
-import * as express from "express";
 import request from "supertest";
 import createServer from "../loaders/server";
 import CityService from "../api/services/city";
@@ -32,6 +31,7 @@ describe("City Controller", () => {
       jest.spyOn(CityService, "listAllCities").mockResolvedValueOnce(undefined);
       const response = await request(app).get(`/api/v1/cities`);
       expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({ error: "No cities found" });
     });
   });
   describe("getCityById()", () => {
@@ -39,8 +39,6 @@ describe("City Controller", () => {
       const cities = await CityService.listAllCities();
       const cityId = cities[0].id;
       const response = await request(app).get(`/api/v1/cities/${cityId}`);
-      const myObject = response.body;
-      console.dir(myObject, { depth: null });
       expect(response.status).toBe(200);
       expect(response.body.id).toBe(cities[0].id);
       expect(response.body.name).toBe(cities[0].name);
@@ -49,6 +47,7 @@ describe("City Controller", () => {
     it("should return 404 Not Found when the city with the given id does not exist", async () => {
       const response = await request(app).get(`/api/v1/cities/123`);
       expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({ error: "No city found" });
     });
   });
   describe("createCity()", () => {
@@ -110,9 +109,8 @@ describe("City Controller", () => {
 
     it("should return 404 Not Found when the city with the given id does not exist", async () => {
       const response = await request(app).delete("/api/v1/cities/123");
-      const myObject = response.body;
-      console.dir(myObject, { depth: null });
       expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({ error: "No city found" });
     });
 
     it("should return 404 Not Found when no city was deleted", async () => {
