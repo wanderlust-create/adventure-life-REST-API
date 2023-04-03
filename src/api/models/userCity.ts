@@ -20,8 +20,8 @@ class UserCity extends Model {
     required: ["cityId", "userId"],
     properties: {
       id: { type: "integer" },
-      cityId: { type: "integer", minLength: 1, maxLength: 255 },
-      userId: { type: "integer", minLength: 1, maxLength: 255 },
+      cityId: { type: "string", minLength: 1, maxLength: 255 },
+      userId: { type: "string", minLength: 1, maxLength: 255 },
     },
   };
 

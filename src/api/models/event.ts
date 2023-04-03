@@ -18,7 +18,7 @@ class Event extends Model {
     required: ["cityId", "title"],
     properties: {
       id: { type: "integer" },
-      cityId: { type: "integer", minLength: 1, maxLength: 255 },
+      cityId: { type: "string", minLength: 1, maxLength: 255 },
       title: { type: "string", minLength: 1, maxLength: 255 },
     },
   };
