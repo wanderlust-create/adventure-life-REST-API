@@ -104,7 +104,7 @@ async function deleteEventById(
     const id = req.params.id;
     const deletedEvent = await EventService.deleteEventById(id);
     if (deletedEvent.length === 0) {
-      res.status(404).json({ error: "No event deleted" });
+      res.status(404).json({ error: "No event found" });
       return;
     } else {
       logger.info("Event Deleted:", deletedEvent);
