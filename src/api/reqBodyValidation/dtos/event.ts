@@ -1,4 +1,4 @@
-import * as yup from "yup";
+import * as yup from 'yup';
 
 const eventDto = yup.object().shape({
   cityId: yup.string().required(),

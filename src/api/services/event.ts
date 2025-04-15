@@ -1,5 +1,5 @@
-import Event from "api/models/event";
-import EventDAO from "../daos/event";
+import Event from 'api/models/event';
+import EventDAO from '../daos/event';
 
 export default {
   listAllEvents,

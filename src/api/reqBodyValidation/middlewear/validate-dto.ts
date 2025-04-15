@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import * as yup from "yup";
+import { Request, Response, NextFunction } from 'express';
+import * as yup from 'yup';
 // Load Logger
-import logger from "../../../loaders/logger";
+import logger from '../../../loaders/logger';
 
 // Error handling function
-import ApiError from "../error/apiError";
+import ApiError from '../error/apiError';
 
 export default function validateDto(schema) {
   return async (req: Request, res: Response, next: NextFunction) => {

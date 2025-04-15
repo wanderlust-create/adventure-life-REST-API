@@ -1,4 +1,4 @@
-import * as winston from "winston";
+import * as winston from 'winston';
 
 export const logger = winston.createLogger({
   level: process.env.LOG_LEVEL,
@@ -7,16 +7,16 @@ export const logger = winston.createLogger({
   }),
   transports: [
     new winston.transports.File({
-      filename: "logs/all.log",
+      filename: 'logs/all.log',
     }),
     new winston.transports.File({
-      filename: "logs/error.log",
-      level: "error",
+      filename: 'logs/error.log',
+      level: 'error',
     }),
   ],
 });
 
-if (process.env.NODE_ENV != "production") {
+if (process.env.NODE_ENV != 'production') {
   logger.add(
     new winston.transports.Console({
       format: winston.format.simple(),

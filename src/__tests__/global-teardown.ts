@@ -1,6 +1,6 @@
-import Knex from "knex";
-import knexfile from "../config/knexfile";
-import logger from "../loaders/logger";
+import Knex from 'knex';
+import knexfile from '../config/knexfile';
+import logger from '../loaders/logger';
 
 export default async function teardown(): Promise<void> {
   const db = Knex(knexfile.test);
@@ -12,7 +12,7 @@ export default async function teardown(): Promise<void> {
     await db.raw('DROP TABLE IF EXISTS "event" CASCADE');
     await db.raw('DROP TABLE IF EXISTS "user" CASCADE');
     await db.raw('DROP TABLE IF EXISTS "city" CASCADE');
-    logger.info("Migrations rolled back successfully");
+    logger.info('Migrations rolled back successfully');
   } catch (error) {
     logger.error(`Error rolling back migrations: ${error}`);
   }

@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response, Router } from "express";
-import UserController from "../../controllers/user";
+import { NextFunction, Request, Response, Router } from 'express';
+import UserController from '../../controllers/user';
 
 // Error Handler
-import validateDto from "../../reqBodyValidation/middlewear/validate-dto";
-import userDto from "../../reqBodyValidation/dtos/user";
+import validateDto from '../../reqBodyValidation/middlewear/validate-dto';
+import userDto from '../../reqBodyValidation/dtos/user';
 
 const route = Router();
 export default (app: Router) => {
-  app.use("/users", route);
+  app.use('/users', route);
 
   /**
    * @swagger
@@ -89,7 +89,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/", UserController.listAllUsers);
+  route.get('/', UserController.listAllUsers);
 
   /**
    * @swagger
@@ -116,7 +116,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/:id", UserController.getUserById);
+  route.get('/:id', UserController.getUserById);
 
   /**
    * @swagger
@@ -147,7 +147,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.post("/", validateDto(userDto), UserController.createUser);
+  route.post('/', validateDto(userDto), UserController.createUser);
 
   /**
    * @swagger
@@ -182,7 +182,7 @@ export default (app: Router) => {
    *      500:
    *        description: An error occurred
    */
-  route.patch("/:id", UserController.updateUserById);
+  route.patch('/:id', UserController.updateUserById);
 
   /**
    * @swagger
@@ -206,5 +206,5 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.delete("/:id", UserController.deleteUserById);
+  route.delete('/:id', UserController.deleteUserById);
 };

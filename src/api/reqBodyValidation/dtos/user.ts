@@ -1,4 +1,4 @@
-import * as yup from "yup";
+import * as yup from 'yup';
 
 const userDto = yup.object().shape({
   firstName: yup.string().trim().required(),

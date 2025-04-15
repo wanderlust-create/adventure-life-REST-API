@@ -1,6 +1,6 @@
-import * as express from "express";
-import logger from "../../loaders/logger";
-import UserCityService from "../services/userCity";
+import * as express from 'express';
+import logger from '../../loaders/logger';
+import UserCityService from '../services/userCity';
 
 export default {
   listAllUserCities,
@@ -8,10 +8,7 @@ export default {
   deleteUserCityById,
 };
 
-async function listAllUserCities(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function listAllUserCities(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET ALL CONTROLLER - user-cities endpoint.`);
   const userCities = await UserCityService.listAllUserCities();
   try {
@@ -26,10 +23,7 @@ async function listAllUserCities(
     res.status(500).json(err);
   }
 }
-async function createUserCity(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function createUserCity(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering CREATE CONTROLLER - user-cities endpoint.`);
   const newUserCity = await UserCityService.createUserCity(req.body);
   try {
@@ -44,10 +38,7 @@ async function createUserCity(
     res.status(500).json(err);
   }
 }
-async function deleteUserCityById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function deleteUserCityById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering DELETE CONTROLLER - user-cities endpoint.`);
   const id = req.params.id;
   const deletedUserCity = await UserCityService.deleteUserCityById(id);
@@ -56,8 +47,8 @@ async function deleteUserCityById(
       res.status(404).json({ error: `User-city not found` });
       return;
     } else {
-      logger.info("User-City deleted:", deletedUserCity);
-      res.json({ alert: "User-City Deleted", deletedUserCity });
+      logger.info('User-City deleted:', deletedUserCity);
+      res.json({ alert: 'User-City Deleted', deletedUserCity });
     }
   } catch (err) {
     logger.error(err);

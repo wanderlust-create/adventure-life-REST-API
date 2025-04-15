@@ -1,5 +1,5 @@
-import logger from "../../loaders/logger";
-import City from "../models/city";
+import logger from '../../loaders/logger';
+import City from '../models/city';
 
 export default {
   listAllCities,
@@ -16,9 +16,9 @@ export default {
 async function listAllCities() {
   logger.debug(`Entering GET DAO- cities/ endpoint.`);
   return City.query()
-    .column("id", "name", "country")
-    .orderBy("created_at", "desc")
-    .withGraphFetched("event");
+    .column('id', 'name', 'country')
+    .orderBy('created_at', 'desc')
+    .withGraphFetched('event');
 }
 
 /**
@@ -27,10 +27,7 @@ async function listAllCities() {
  */
 async function getCityById(cityId: string) {
   logger.debug(`Entering GET BY ID DAO- cities/ endpoint ${cityId}`);
-  return City.query()
-    .findById(cityId)
-    .column("id", "name", "country")
-    .withGraphFetched("event");
+  return City.query().findById(cityId).column('id', 'name', 'country').withGraphFetched('event');
 }
 
 /**
@@ -61,7 +58,7 @@ async function updateCityById(cityId: string, cityData: City) {
       name: cityData.name,
       country: cityData.country,
     })
-    .returning("*");
+    .returning('*');
   return updatedCity;
 }
 
@@ -72,9 +69,6 @@ async function updateCityById(cityId: string, cityData: City) {
  */
 async function deleteCityById(cityId: string) {
   logger.debug(`Entering DELETE BY ID DAO- cities/ endpoint ${cityId}`);
-  const deletedCity = await City.query()
-    .delete()
-    .where({ id: cityId })
-    .returning("*");
+  const deletedCity = await City.query().delete().where({ id: cityId }).returning('*');
   return deletedCity;
 }

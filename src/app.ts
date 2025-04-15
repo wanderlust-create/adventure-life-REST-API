@@ -1,8 +1,8 @@
-import createServer from "./loaders/server";
-import config from "./config";
-import swaggerDocs from "./loaders/swagger";
-import dbSetup from "./loaders/dbSetup";
-import logger from "./loaders/logger";
+import createServer from './loaders/server';
+import config from './config';
+import swaggerDocs from './loaders/swagger';
+import dbSetup from './loaders/dbSetup';
+import logger from './loaders/logger';
 
 const port = config.PORT;
 
@@ -14,7 +14,7 @@ app.listen(port, async () => {
     `🎆 🚕 ✈️  Adventure Life REST API listening at http://localhost:${config.PORT} ✈️ 🚕 🎆`
   );
   dbSetup();
-  logger.info("Database is connected");
+  logger.info('Database is connected');
 });
 
 export default app;

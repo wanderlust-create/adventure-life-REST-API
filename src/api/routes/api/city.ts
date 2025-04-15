@@ -1,14 +1,14 @@
-import { NextFunction, Request, Response, Router } from "express";
-import CityController from "../../controllers/city";
+import { NextFunction, Request, Response, Router } from 'express';
+import CityController from '../../controllers/city';
 
 // Error Handler
-import validateDto from "../../reqBodyValidation/middlewear/validate-dto";
-import cityDto from "../../reqBodyValidation/dtos/city";
+import validateDto from '../../reqBodyValidation/middlewear/validate-dto';
+import cityDto from '../../reqBodyValidation/dtos/city';
 
 const route = Router();
 
 export default (app: Router) => {
-  app.use("/cities", route);
+  app.use('/cities', route);
   /**
    * @swagger
    * components:
@@ -47,7 +47,7 @@ export default (app: Router) => {
    *         country:
    *           type: string
    *           description: The country name
-   *         example: 
+   *         example:
    *           id: 6
    *           name: Amsterdam
    *           country: the Netherlands
@@ -81,7 +81,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/", CityController.listAllCities);
+  route.get('/', CityController.listAllCities);
 
   /**
    * @swagger
@@ -108,7 +108,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/:id", CityController.getCityById);
+  route.get('/:id', CityController.getCityById);
 
   /**
    * @swagger
@@ -137,7 +137,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.post("/", validateDto(cityDto), CityController.createCity);
+  route.post('/', validateDto(cityDto), CityController.createCity);
 
   /**
    * @swagger
@@ -172,7 +172,7 @@ export default (app: Router) => {
    *      500:
    *        description: An error occurred
    */
-  route.patch("/:id", CityController.updateCityById);
+  route.patch('/:id', CityController.updateCityById);
 
   /**
    * @swagger
@@ -196,5 +196,5 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.delete("/:id", CityController.deleteCityById);
+  route.delete('/:id', CityController.deleteCityById);
 };
