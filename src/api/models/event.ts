@@ -1,9 +1,9 @@
-import { Model, RelationMappings } from "objection";
-import { join } from "path";
-import City from "./city";
+import { Model, RelationMappings } from 'objection';
+import { join } from 'path';
+import City from './city';
 
 class Event extends Model {
-  static tableName = "event";
+  static tableName = 'event';
   readonly id!: number;
   readonly cityId!: number;
   title!: string;
@@ -14,24 +14,24 @@ class Event extends Model {
   city?: City;
 
   static jsonSchema = {
-    type: "object",
-    required: ["cityId", "title"],
+    type: 'object',
+    required: ['cityId', 'title'],
     properties: {
-      id: { type: "integer" },
-      cityId: { type: "string", minLength: 1, maxLength: 255 },
-      title: { type: "string", minLength: 1, maxLength: 255 },
+      id: { type: 'integer' },
+      cityId: { type: 'string', minLength: 1, maxLength: 255 },
+      title: { type: 'string', minLength: 1, maxLength: 255 },
     },
   };
 
   static relationMappings: RelationMappings = {
     city: {
       relation: Model.BelongsToOneRelation,
-      modelClass: join(__dirname, "city"),
+      modelClass: join(__dirname, 'city'),
       join: {
-        from: "event.cityId",
-        to: "city.id",
+        from: 'event.cityId',
+        to: 'city.id',
       },
-      filter: (query) => query.select("id", "name"),
+      filter: (query) => query.select('id', 'name'),
     },
   };
 }

@@ -1,5 +1,5 @@
-import logger from "../../loaders/logger";
-import User from "../models/user";
+import logger from '../../loaders/logger';
+import User from '../models/user';
 
 export default {
   listAllUsers,
@@ -15,9 +15,9 @@ export default {
 async function listAllUsers() {
   logger.debug(`Entering GET DAO- users/ endpoint.`);
   return User.query()
-    .column("id", "firstName", "lastName", "email")
-    .orderBy("created_at", "desc")
-    .withGraphFetched("city");
+    .column('id', 'firstName', 'lastName', 'email')
+    .orderBy('created_at', 'desc')
+    .withGraphFetched('city');
 }
 
 /**
@@ -29,8 +29,8 @@ async function getUserById(id: string) {
   logger.debug(`Entering GET BY ID DAO- users/ endpoint ${id}`);
   return User.query()
     .findById(id)
-    .column("id", "firstName", "lastName", "email")
-    .withGraphFetched("city");
+    .column('id', 'firstName', 'lastName', 'email')
+    .withGraphFetched('city');
 }
 
 /**
@@ -64,7 +64,7 @@ async function updateUserById(id: string, userData: User) {
       lastName: userData.lastName,
       email: userData.email,
     })
-    .returning("*");
+    .returning('*');
   return updatedUser;
 }
 
@@ -76,6 +76,6 @@ async function updateUserById(id: string, userData: User) {
 
 async function deleteUserById(id: string) {
   logger.debug(`Entering DELETE BY ID DAO- users/ endpoint ${id}`);
-  const deletedUser = await User.query().delete().where({ id }).returning("*");
+  const deletedUser = await User.query().delete().where({ id }).returning('*');
   return deletedUser;
 }

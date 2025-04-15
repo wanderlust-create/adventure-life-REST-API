@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response, Router } from "express";
-import UserCityController from "../../controllers/userCity";
+import { NextFunction, Request, Response, Router } from 'express';
+import UserCityController from '../../controllers/userCity';
 
 // Error Handler
-import validateDto from "../../reqBodyValidation/middlewear/validate-dto";
-import userCityDto from "../../reqBodyValidation/dtos/userCity";
+import validateDto from '../../reqBodyValidation/middlewear/validate-dto';
+import userCityDto from '../../reqBodyValidation/dtos/userCity';
 
 const route = Router();
 export default (app: Router) => {
-  app.use("/user-cities", route);
+  app.use('/user-cities', route);
 
   /**
    * @swagger
@@ -80,7 +80,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/", UserCityController.listAllUserCities);
+  route.get('/', UserCityController.listAllUserCities);
 
   /**
    * @swagger
@@ -109,11 +109,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.post(
-    "/",
-    validateDto(userCityDto),
-    UserCityController.createUserCity
-  );
+  route.post('/', validateDto(userCityDto), UserCityController.createUserCity);
 
   /**
    * @swagger
@@ -136,5 +132,5 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.delete("/:id", UserCityController.deleteUserCityById);
+  route.delete('/:id', UserCityController.deleteUserCityById);
 };

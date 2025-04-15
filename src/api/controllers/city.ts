@@ -1,6 +1,6 @@
-import * as express from "express";
-import logger from "../../loaders/logger";
-import CityService from "../services/city";
+import * as express from 'express';
+import logger from '../../loaders/logger';
+import CityService from '../services/city';
 
 export default {
   listAllCities,
@@ -10,10 +10,7 @@ export default {
   deleteCityById,
 };
 
-async function listAllCities(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function listAllCities(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET All CONTROLLER - cities/ endpoint.`);
   const cities = await CityService.listAllCities();
   try {
@@ -28,15 +25,12 @@ async function listAllCities(
     res.status(500).send(err);
   }
 }
-async function getCityById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function getCityById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET BY ID CONTROLLER - cities/ endpoint.`);
   const city = await CityService.getCityById(req.params.id);
   try {
     if (city === undefined) {
-      res.status(404).json({ error: "No city found" });
+      res.status(404).json({ error: 'No city found' });
       return;
     } else {
       res.json(city);
@@ -46,15 +40,12 @@ async function getCityById(
     res.status(500).json(err);
   }
 }
-async function createCity(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function createCity(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering CREATE CONTROLLER - cities/ endpoint.`);
   const newCity = await CityService.createCity(req.body);
   try {
     if (newCity === undefined) {
-      res.status(404).json({ error: "City was not created" });
+      res.status(404).json({ error: 'City was not created' });
       return;
     } else {
       res.json(newCity);
@@ -64,16 +55,13 @@ async function createCity(
     res.status(500).json(err);
   }
 }
-async function updateCityById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function updateCityById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering UPDATE CONTROLLER - cities/ endpoint.`);
   const id = req.params.id;
   const updatedCity = await CityService.updateCityById(id, req.body);
   try {
     if (!updatedCity) {
-      res.status(404).json({ error: "No city found" });
+      res.status(404).json({ error: 'No city found' });
       return;
     } else {
       res.json(updatedCity);
@@ -83,20 +71,17 @@ async function updateCityById(
     res.status(500).json(err);
   }
 }
-async function deleteCityById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function deleteCityById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering DELETE CONTROLLER - cities/ endpoint.`);
   try {
     const id = req.params.id;
     const deletedCity = await CityService.deleteCityById(id);
     if (deletedCity.length === 0) {
-      res.status(404).json({ error: "No city found" });
+      res.status(404).json({ error: 'No city found' });
       return;
     } else {
-      logger.info("City Deleted:", deletedCity);
-      res.json({ alert: "City Deleted", deletedCity });
+      logger.info('City Deleted:', deletedCity);
+      res.json({ alert: 'City Deleted', deletedCity });
     }
   } catch (err) {
     logger.error(err);

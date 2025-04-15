@@ -1,5 +1,5 @@
-import UserCity from "api/models/userCity";
-import userCityDao from "../daos/userCity";
+import UserCity from 'api/models/userCity';
+import userCityDao from '../daos/userCity';
 
 export default {
   listAllUserCities,

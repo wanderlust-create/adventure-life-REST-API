@@ -1,6 +1,6 @@
-import logger from "../../loaders/logger";
-import Event from "../models/event";
-import User from "../models/user";
+import logger from '../../loaders/logger';
+import Event from '../models/event';
+import User from '../models/user';
 
 export default {
   listAllEvents,
@@ -18,10 +18,7 @@ export default {
  */
 async function listAllEvents() {
   logger.debug(`Entering GET DAO- events/ endpoint.`);
-  return Event.query()
-    .column("id", "title")
-    .orderBy("created_at", "desc")
-    .withGraphFetched("city");
+  return Event.query().column('id', 'title').orderBy('created_at', 'desc').withGraphFetched('city');
 }
 
 /**
@@ -31,10 +28,7 @@ async function listAllEvents() {
  */
 async function getEventById(eventId: string) {
   logger.debug(`Entering GET BY ID DAO- events/ endpoint ${eventId}`);
-  return Event.query()
-    .findById(eventId)
-    .column("id", "title")
-    .withGraphFetched("city");
+  return Event.query().findById(eventId).column('id', 'title').withGraphFetched('city');
 }
 
 /**
@@ -44,7 +38,7 @@ async function getEventById(eventId: string) {
  */
 async function filterEventsByCityId(cityId: string) {
   logger.debug(`Entering FILTER BY CITY DAO- events/ endpoint ${cityId}`);
-  return Event.query().select("id", "title", "cityId").where("cityId", cityId);
+  return Event.query().select('id', 'title', 'cityId').where('cityId', cityId);
 }
 
 /**
@@ -56,8 +50,8 @@ async function filterEventsByUserId(userId: string) {
   logger.debug(`Entering FILTER BY USER DAO- events/ endpoint ${userId}`);
   return User.query()
     .findById(userId)
-    .column("id", "firstName", "lastName")
-    .withGraphFetched("[city.[event]]");
+    .column('id', 'firstName', 'lastName')
+    .withGraphFetched('[city.[event]]');
 }
 
 /**
@@ -88,7 +82,7 @@ async function updateEventById(eventId: string, eventData: Event) {
       cityId: eventData.cityId,
       title: eventData.title,
     })
-    .returning("*");
+    .returning('*');
   return updatedEvent;
 }
 
@@ -99,9 +93,6 @@ async function updateEventById(eventId: string, eventData: Event) {
  */
 async function deleteEventById(eventId: string) {
   logger.debug(`Entering DELETE BY ID DAO- events/ endpoint ${eventId}`);
-  const deletedEvent = await Event.query()
-    .delete()
-    .where({ id: eventId })
-    .returning("*");
+  const deletedEvent = await Event.query().delete().where({ id: eventId }).returning('*');
   return deletedEvent;
 }

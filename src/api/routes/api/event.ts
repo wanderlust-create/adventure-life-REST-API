@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response, Router } from "express";
-import EventController from "../../controllers/event";
+import { NextFunction, Request, Response, Router } from 'express';
+import EventController from '../../controllers/event';
 
 // Error Handlers
-import validateDto from "../../reqBodyValidation/middlewear/validate-dto";
-import eventDto from "../../reqBodyValidation/dtos/event";
+import validateDto from '../../reqBodyValidation/middlewear/validate-dto';
+import eventDto from '../../reqBodyValidation/dtos/event';
 
 const route = Router();
 export default (app: Router) => {
-  app.use("/events", route);
+  app.use('/events', route);
 
   /**
    * @swagger
@@ -89,7 +89,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/", EventController.listEvents);
+  route.get('/', EventController.listEvents);
 
   /**
    * @swagger
@@ -116,7 +116,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.get("/:id", EventController.getEventById);
+  route.get('/:id', EventController.getEventById);
 
   /**
    * @swagger
@@ -145,7 +145,7 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.post("/", validateDto(eventDto), EventController.createEvent);
+  route.post('/', validateDto(eventDto), EventController.createEvent);
 
   /**
    * @swagger
@@ -180,7 +180,7 @@ export default (app: Router) => {
    *      500:
    *        description: An error occurred
    */
-  route.patch("/:id", EventController.updateEventById);
+  route.patch('/:id', EventController.updateEventById);
 
   /**
    * @swagger
@@ -203,5 +203,5 @@ export default (app: Router) => {
    *       500:
    *         description: An error occurred
    */
-  route.delete("/:id", EventController.deleteEventById);
+  route.delete('/:id', EventController.deleteEventById);
 };

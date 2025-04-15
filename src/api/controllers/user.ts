@@ -1,6 +1,6 @@
-import * as express from "express";
-import logger from "../../loaders/logger";
-import UserService from "../services/user";
+import * as express from 'express';
+import logger from '../../loaders/logger';
+import UserService from '../services/user';
 
 export default {
   listAllUsers,
@@ -10,10 +10,7 @@ export default {
   deleteUserById,
 };
 
-async function listAllUsers(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function listAllUsers(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET All CONTROLLER - users/ endpoint.`);
   const users = await UserService.listAllUsers();
   try {
@@ -28,15 +25,12 @@ async function listAllUsers(
     res.status(500).send(err);
   }
 }
-async function getUserById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function getUserById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET BY ID CONTROLLER - users/ endpoint.`);
   const findUser = await UserService.getUserById(req.params.id);
   try {
     if (findUser === undefined) {
-      res.status(404).json({ error: "No user found" });
+      res.status(404).json({ error: 'No user found' });
       return;
     } else {
       res.json(findUser);
@@ -46,15 +40,12 @@ async function getUserById(
     res.status(500).json(err);
   }
 }
-async function createUser(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function createUser(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering CREATE CONTROLLER - users/ endpoint.`);
   const newUser = await UserService.createUser(req.body);
   try {
     if (newUser === undefined) {
-      res.status(404).json({ error: "User was not created" });
+      res.status(404).json({ error: 'User was not created' });
       return;
     } else {
       res.json(newUser);
@@ -64,16 +55,13 @@ async function createUser(
     res.status(500).json(err);
   }
 }
-async function updateUserById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function updateUserById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering UPDATE CONTROLLER - users/ endpoint.`);
   const id = req.params.id;
   const updatedUser = await UserService.updateUserById(id, req.body);
   try {
     if (!updatedUser) {
-      res.status(404).json({ error: "No user found" });
+      res.status(404).json({ error: 'No user found' });
       return;
     } else {
       res.json(updatedUser);
@@ -83,20 +71,17 @@ async function updateUserById(
     res.status(500).json(err);
   }
 }
-async function deleteUserById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function deleteUserById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering DELETE CONTROLLER - users/ endpoint.`);
   try {
     const id = req.params.id;
     const deletedUser = await UserService.deleteUserById(id);
     if (deletedUser.length === 0) {
-      res.status(404).json({ error: "No user found" });
+      res.status(404).json({ error: 'No user found' });
       return;
     } else {
-      logger.info("User Deleted:", deletedUser);
-      res.json({ alert: "User Deleted", deletedUser });
+      logger.info('User Deleted:', deletedUser);
+      res.json({ alert: 'User Deleted', deletedUser });
     }
   } catch (err) {
     logger.error(err);

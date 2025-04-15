@@ -1,5 +1,5 @@
-import City from "api/models/city";
-import cityDao from "../daos/city";
+import City from 'api/models/city';
+import cityDao from '../daos/city';
 
 export default {
   listAllCities,

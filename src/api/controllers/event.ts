@@ -1,8 +1,8 @@
-import * as express from "express";
-import logger from "../../loaders/logger";
-import EventService from "../services/event";
-import Event from "../models/event";
-import User from "../models/user";
+import * as express from 'express';
+import logger from '../../loaders/logger';
+import EventService from '../services/event';
+import Event from '../models/event';
+import User from '../models/user';
 
 export default {
   listEvents,
@@ -12,10 +12,7 @@ export default {
   deleteEventById,
 };
 
-async function listEvents(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function listEvents(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET CONTROLLER - events/ endpoint.`);
   type ReturnValue = User | Event[];
   let events: ReturnValue = [];
@@ -40,15 +37,12 @@ async function listEvents(
     res.status(500).send(err);
   }
 }
-async function getEventById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function getEventById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET BY ID CONTROLLER - events/ endpoint.`);
   const event = await EventService.getEventById(req.params.id);
   try {
     if (event === undefined) {
-      res.status(404).json({ error: "No event found" });
+      res.status(404).json({ error: 'No event found' });
       return;
     } else {
       res.json(event);
@@ -58,15 +52,12 @@ async function getEventById(
     res.status(500).json(err);
   }
 }
-async function createEvent(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function createEvent(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering CREATE CONTROLLER - events/ endpoint.`);
   const newEvent = await EventService.createEvent(req.body);
   try {
     if (newEvent === undefined) {
-      res.status(404).json({ error: "Event was not created" });
+      res.status(404).json({ error: 'Event was not created' });
       return;
     } else {
       res.json(newEvent);
@@ -76,16 +67,13 @@ async function createEvent(
     res.status(500).json(err);
   }
 }
-async function updateEventById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function updateEventById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering UPDATE CONTROLLER - events/ endpoint.`);
   const id = req.params.id;
   const updatedEvent = await EventService.updateEventById(id, req.body);
   try {
     if (!updatedEvent) {
-      res.status(404).json({ error: "No event found" });
+      res.status(404).json({ error: 'No event found' });
       return;
     } else {
       res.json(updatedEvent);
@@ -95,20 +83,17 @@ async function updateEventById(
     res.status(500).json(err);
   }
 }
-async function deleteEventById(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+async function deleteEventById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering DELETE CONTROLLER - events/ endpoint.`);
   try {
     const id = req.params.id;
     const deletedEvent = await EventService.deleteEventById(id);
     if (deletedEvent.length === 0) {
-      res.status(404).json({ error: "No event found" });
+      res.status(404).json({ error: 'No event found' });
       return;
     } else {
-      logger.info("Event Deleted:", deletedEvent);
-      res.json({ alert: "Event Deleted", deletedEvent });
+      logger.info('Event Deleted:', deletedEvent);
+      res.json({ alert: 'Event Deleted', deletedEvent });
     }
   } catch (err) {
     logger.error(err);

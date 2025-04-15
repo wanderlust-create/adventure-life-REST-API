@@ -1,5 +1,5 @@
-import User from "api/models/user";
-import userDao from "../daos/user";
+import User from 'api/models/user';
+import userDao from '../daos/user';
 
 export default {
   listAllUsers,
