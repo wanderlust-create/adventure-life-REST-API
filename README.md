@@ -1,7 +1,7 @@
 ![adventure-life-logo](https://user-images.githubusercontent.com/67713820/217662321-e2c81fdc-3b12-4522-aaab-9063a7fd75de.png)
 <p align="center">
 <h1>This app serves as a RESTful API database access for the ~fictitious~ Adventure Life travel company </h1>
-    <br> 
+    <br>
 </p>
 
 ----------
@@ -51,18 +51,18 @@
 2. Install node packages `cd adventure-life` then `npm install`
 3. Rename `.env.example` to `.env` and enter your local environment variables
 4. Run `npm run build` to compile the TS code
-4. Run `npm run dev` to start the application
+4. Run `npm run start` to start the application
 5. Open your local browser and verify the adventure-life app is working by accessing `http://localhost:<your env PORT>`
 
 #### Database setup:
 
 1. Create a PostgreSQL database using the same name, owner, and password you have in your .env file
-2. You can now load the script via a npm command: `npm run migrate`. 
+2. You can now load the script via a npm command: `npm run migrate`.
 
 #### Database seeding:
 
-1. In `src/db/sources` you will find files that can be used for seeding the database. Make sure that the database and coorsponding tables have been created before executing the seed script. 
-2. You can now load the script via a npm command: `npm run seed`. 
+1. In `src/db/sources` you will find files that can be used for seeding the database. Make sure that the database and coorsponding tables have been created before executing the seed script.
+2. You can now load the script via a npm command: `npm run seed`.
 
 ----------
 ## 🗺 Schema  <a name = "schema"></a>
