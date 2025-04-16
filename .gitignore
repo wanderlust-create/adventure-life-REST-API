@@ -1,10 +1,27 @@
-# Dependency directories
-node_modules
+# Node dependencies
+node_modules/
+
+# Build output
+dist/
 
 # Logs
-logs
+logs/
 *.log
 
-# misc
-dist
+# Environment variables
 .env
+
+# MacOS system files
+.DS_Store
+
+# Postman files
+*.postman_environment.json
+*.postman_collection.json
+
+# VSCode settings
+.vscode/
+
+# TS/JS cache
+*.tsbuildinfo
+
+
