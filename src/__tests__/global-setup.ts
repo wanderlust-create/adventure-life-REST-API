@@ -1,5 +1,5 @@
 import Knex from 'knex';
-import knexfile from '../config/knexfile';
+import knexfile from '../config/knexConfig';
 import logger from '../loaders/logger';
 
 export default async function setup(): Promise<void> {

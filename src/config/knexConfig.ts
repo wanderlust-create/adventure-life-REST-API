@@ -3,6 +3,8 @@ import { knexSnakeCaseMappers } from 'objection';
 import type { Knex } from 'knex';
 
 require('dotenv').config({ path: '../../.env' });
+console.log('📦 knexfile.ts loaded');
+
 
 const config: { [key: string]: Knex.Config } = {
   development: {
@@ -50,5 +52,6 @@ const config: { [key: string]: Knex.Config } = {
     ...knexSnakeCaseMappers(),
   },
 };
+console.trace('📛 knexfile.ts loaded — trace');
 
 export default config;

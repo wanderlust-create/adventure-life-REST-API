@@ -2,6 +2,6 @@
 require('ts-node/register');
 require('dotenv').config(); // 👈 Load .env from project root
 
-const config = require('./src/config/knexfile.ts').default;
+const config = require('./src/config/knexConfig.ts').default;
 
 module.exports = config;
