@@ -1,3 +1,4 @@
+import path from 'path';
 import { knexSnakeCaseMappers } from 'objection';
 import type { Knex } from 'knex';
 
@@ -18,11 +19,11 @@ const config: { [key: string]: Knex.Config } = {
       max: 10,
     },
     migrations: {
-      directory: '../db/migrations',
+      directory: path.resolve(__dirname, '../db/migrations'),
       tableName: 'knex_migrations',
     },
     seeds: {
-      directory: '../db/seeds',
+      directory: path.resolve(__dirname, '../db/seeds'),
     },
 
     // auto convert camelCase to snake case when accessing the Postgresql db
