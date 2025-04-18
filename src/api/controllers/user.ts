@@ -14,7 +14,7 @@ async function listAllUsers(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ GET /users');
   try {
     const users = await UserService.listAllUsers();
-    if (!users) {
+    if (!users || users.length === 0) {
       res.status(404).json({ error: `No users found` });
       return;
     } else {
@@ -29,12 +29,12 @@ async function listAllUsers(req: Request, res: Response): Promise<void> {
 async function getUserById(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ GET /users/:id');
   try {
-    const findUser = await UserService.getUserById(req.params.id);
-    if (findUser === undefined) {
+    const user = await UserService.getUserById(req.params.id);;
+    if (!user) {
       res.status(404).json({ error: 'No user found' });
       return;
     } else {
-      res.json(findUser);
+      res.json(user);
     }
   } catch (err) {
     logger.error('❌ Error in getUserById()', err);
@@ -45,7 +45,7 @@ async function createUser(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ POST /users');
   try {
     const newUser = await UserService.createUser(req.body);
-    if (newUser === undefined) {
+    if (!newUser) {
       res.status(404).json({ error: 'User was not created' });
       return;
     } else {
@@ -77,7 +77,7 @@ async function deleteUserById(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ DELETE /users/:id');
   try {
     const deletedUser = await UserService.deleteUserById(req.params.id);
-    if (deletedUser.length === 0) {
+    if (!deletedUser || deletedUser.length === 0) {
       res.status(404).json({ error: 'No user found' });
       return;
     } else {
