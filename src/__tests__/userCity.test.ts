@@ -6,7 +6,6 @@ import UserService from '../api/services/user';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 
-
 const app = createServer();
 let server: Server;
 let baseUrl: string;
@@ -70,7 +69,10 @@ describe('User Controller', () => {
         .send({})
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe('cityId is a required field');
+      expect(response.body.message).toBe('Validation failed');
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining(['userId is a required field', 'cityId is a required field'])
+      );
       expect(createUserCityServiceMock).not.toHaveBeenCalled();
     });
   });
