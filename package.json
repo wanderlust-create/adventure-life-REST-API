@@ -4,10 +4,10 @@
   "description": "RESTful API backend for a fictional travel platform built with TypeScript, Express, Objection.js, and PostgreSQL",
   "main": "dist/src/app.js",
   "scripts": {
-    "migrate": "knex migrate:latest",
+    "migrate": "knex migrate:latest --env test",
     "migrate:rollback": "knex migrate:down",
     "migrate:make": "knex migrate:make",
-    "seed": "knex seed:run",
+    "seed": "knex seed:run --env test",
     "truncate-db": "ts-node scripts/truncate-db.ts",
     "reset-db": "ts-node scripts/reset-db.ts",
     "clean": "rimraf dist",
