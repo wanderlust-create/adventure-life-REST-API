@@ -75,7 +75,6 @@ describe('City Controller', () => {
         .post(`/api/v1/cities`)
         .send({})
         .set('Accept', 'application/json');
-      console.log(response.body);
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Validation failed');
       expect(response.body.errors).toEqual(
