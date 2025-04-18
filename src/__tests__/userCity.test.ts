@@ -38,7 +38,7 @@ describe('User Controller', () => {
   });
 
   describe('createUserCity()', () => {
-    it('should return 200 OK and the created userCity', async () => {
+    it('should return 201 OK and the created userCity', async () => {
       const cities = await CityService.listAllCities();
       const cityId = cities[0].id;
       const users = await UserService.listAllUsers();
@@ -51,7 +51,7 @@ describe('User Controller', () => {
         .post(`/api/v1/user-cities`)
         .send(newUserCity)
         .set('Accept', 'application/json');
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(201);
       expect(response.body.cityId).toBe(String(cityId));
       expect(response.body.userId).toBe(String(userId));
     });
