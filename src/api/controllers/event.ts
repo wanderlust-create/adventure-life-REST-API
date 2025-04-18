@@ -60,7 +60,7 @@ async function createEvent(req: express.Request, res: express.Response): Promise
       res.status(404).json({ error: 'Event was not created' });
       return;
     } else {
-      res.json(newEvent);
+      res.status(201).json(newEvent);
     }
   } catch (err) {
     logger.error(err);
