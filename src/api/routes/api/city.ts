@@ -1,7 +1,5 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Router } from 'express';
 import CityController from '../../controllers/city';
-
-// Error Handler
 import validateDto from '../../reqBodyValidation/middlewear/validate-dto';
 import cityDto from '../../reqBodyValidation/dtos/city';
 
@@ -9,6 +7,7 @@ const route = Router();
 
 export default (app: Router) => {
   app.use('/cities', route);
+
   /**
    * @swagger
    * components:
@@ -16,41 +15,27 @@ export default (app: Router) => {
    *     City:
    *       type: object
    *       required:
-   *         - id
    *         - name
    *         - country
    *       properties:
    *         id:
    *           type: number
-   *           description: The auto-generated id of the city
+   *           description: The auto-generated ID of the city
    *         name:
    *           type: string
-   *           description: The city name
+   *           description: The name of the city
    *         country:
    *           type: string
-   *           description: The country name
+   *           description: The country the city belongs to
    *       example:
    *         id: 6
    *         name: Amsterdam
    *         country: the Netherlands
+   *
    *     CityArray:
    *       type: array
    *       items:
-   *         type: object
-   *         properties:
-   *         id:
-   *           type: number
-   *           description: The auto-generated id of the city
-   *         name:
-   *           type: string
-   *           description: The city name
-   *         country:
-   *           type: string
-   *           description: The country name
-   *         example:
-   *           id: 6
-   *           name: Amsterdam
-   *           country: the Netherlands
+   *         $ref: '#/components/schemas/City'
    */
 
   /**
@@ -64,22 +49,19 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/cities:
    *   get:
-   *     summary: Returns an array of all the cities
+   *     summary: Get a list of all cities
    *     tags: [Cities]
    *     responses:
    *       200:
-   *         description: The cities were successfully retrieved
+   *         description: List of cities retrieved successfully
    *         content:
    *           application/json:
    *             schema:
-   *                 type: array
-   *                 items:
-   *                  $ref: '#/components/schemas/CityArray'
-   *
+   *               $ref: '#/components/schemas/CityArray'
    *       404:
-   *         description: Cities were not found
+   *         description: No cities found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.get('/', CityController.listAllCities);
 
@@ -87,26 +69,26 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/cities/{id}:
    *   get:
-   *     summary: Get city attributes with city_id
+   *     summary: Get a specific city by ID
    *     tags: [Cities]
    *     parameters:
    *       - in: path
    *         name: id
+   *         required: true
    *         schema:
    *           type: number
-   *         required: true
-   *         description: The city id
+   *         description: City ID
    *     responses:
    *       200:
-   *         description: The city attributes
+   *         description: City found
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/City'
    *       404:
-   *         description: The city was not found
+   *         description: City not found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.get('/:id', CityController.getCityById);
 
@@ -126,51 +108,51 @@ export default (app: Router) => {
    *             name: Denver
    *             country: USA
    *     responses:
-   *       200:
-   *         description: The city was successfully created
+   *       201:
+   *         description: City created successfully
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/City'
-   *       404:
-   *         description: The city was not found
+   *       400:
+   *         description: Validation error
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.post('/', validateDto(cityDto), CityController.createCity);
 
   /**
    * @swagger
    * /api/v1/cities/{id}:
-   *  patch:
-   *    summary: Update city using city_id
-   *    tags: [Cities]
-   *    parameters:
-   *      - in: path
-   *        name: id
-   *        schema:
-   *          type: number
-   *        required: true
-   *        description: The city id
-   *    requestBody:
-   *      required: true
-   *      content:
-   *        application/json:
-   *          schema:
-   *            $ref: '#/components/schemas/City'
-   *          example:
-   *            name: Lisbon
-   *    responses:
-   *      200:
-   *        description: The city was updated
-   *        content:
-   *          application/json:
-   *            schema:
-   *              $ref: '#/components/schemas/City'
-   *      404:
-   *        description: The city was not found
-   *      500:
-   *        description: An error occurred
+   *   patch:
+   *     summary: Update a city by ID
+   *     tags: [Cities]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *         description: City ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/City'
+   *           example:
+   *             name: Lisbon
+   *     responses:
+   *       200:
+   *         description: City updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/City'
+   *       404:
+   *         description: City not found
+   *       500:
+   *         description: Server error
    */
   route.patch('/:id', CityController.updateCityById);
 
@@ -178,23 +160,22 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/cities/{id}:
    *   delete:
-   *     summary: Delete city using city_id
+   *     summary: Delete a city by ID
    *     tags: [Cities]
    *     parameters:
    *       - in: path
    *         name: id
+   *         required: true
    *         schema:
    *           type: number
-   *         required: true
-   *         description: The city id
-   *
+   *         description: City ID
    *     responses:
    *       200:
-   *         description: The city was deleted
+   *         description: City deleted successfully
    *       404:
-   *         description: The city was not found
+   *         description: City not found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.delete('/:id', CityController.deleteCityById);
 };
