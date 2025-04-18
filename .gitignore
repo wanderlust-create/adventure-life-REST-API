@@ -8,6 +8,9 @@ dist/
 logs/
 *.log
 
+# Coverage reports
+coverage/
+
 # Environment variables
 .env
 

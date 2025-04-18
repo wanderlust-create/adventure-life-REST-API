@@ -3,31 +3,40 @@ import createServer from '../loaders/server';
 import UserCityService from '../api/services/userCity';
 import CityService from '../api/services/city';
 import UserService from '../api/services/user';
+import { Server } from 'http';
+import { AddressInfo } from 'net';
 
-import logger from '../loaders/logger';
 
-let app = createServer();
-let server: any;
+const app = createServer();
+let server: Server;
+let baseUrl: string;
 
 beforeAll(async () => {
-  server = app.listen(8080);
+  server = app.listen(0); // 0 = random available port
+  const address = server.address() as AddressInfo;
+  baseUrl = `http://localhost:${address.port}`;
 });
 
 afterAll(async () => {
-  await server.close();
+  await new Promise<void>((resolve, reject) => {
+    server.close((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 });
 
 describe('User Controller', () => {
   describe('listAllUserCities()', () => {
     it('returns 200 and a list of all userCities', async () => {
-      const response = await request(app).get(`/api/v1/user-cities`);
+      const response = await request(baseUrl).get(`/api/v1/user-cities`);
       expect(response.status).toBe(200);
       expect(response.body.length).toBeGreaterThan(0);
     });
 
     it('returns 404 when no userCities found', async () => {
       jest.spyOn(UserCityService, 'listAllUserCities').mockResolvedValueOnce(undefined);
-      const response = await request(app).get(`/api/v1/user-cities`);
+      const response = await request(baseUrl).get(`/api/v1/user-cities`);
       expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({ error: 'No user-cities found' });
     });
@@ -43,7 +52,7 @@ describe('User Controller', () => {
         cityId: cityId,
         userId: userId,
       };
-      const response = await request(app)
+      const response = await request(baseUrl)
         .post(`/api/v1/user-cities`)
         .send(newUserCity)
         .set('Accept', 'application/json');
@@ -56,7 +65,7 @@ describe('User Controller', () => {
       const createUserCityServiceMock = jest
         .spyOn(UserCityService, 'createUserCity')
         .mockResolvedValueOnce(undefined);
-      const response = await request(app)
+      const response = await request(baseUrl)
         .post(`/api/v1/user-cities`)
         .send({})
         .set('Accept', 'application/json');
@@ -69,13 +78,13 @@ describe('User Controller', () => {
   describe('deleteUserCityById()', () => {
     it('returns 200 and the deleted userCity', async () => {
       const userCities = await UserCityService.listAllUserCities();
-      const response = await request(app).delete(`/api/v1/user-cities/${userCities[0].id}`);
+      const response = await request(baseUrl).delete(`/api/v1/user-cities/${userCities[0].id}`);
       expect(response.status).toBe(200);
       expect(response.body.deletedUserCity[0].id).toBe(userCities[0].id);
     });
 
     it('returns 404 when the userId does not exist', async () => {
-      const response = await request(app).delete('/api/v1/user-cities/123');
+      const response = await request(baseUrl).delete('/api/v1/user-cities/123');
       expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({ error: 'User-city not found' });
     });
