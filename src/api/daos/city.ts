@@ -10,11 +10,10 @@ export default {
 };
 
 /**
- * Returns an array of all cities, sorted by date.
- * @returns {Promise<City[]>} The cities.
+ * Returns all cities, ordered by creation date.
  */
 async function listAllCities() {
-  logger.debug(`Entering GET DAO- cities/ endpoint.`);
+  logger.debug('➡️ DAO: GET /cities');
   return City.query()
     .column('id', 'name', 'country')
     .orderBy('created_at', 'desc')
@@ -22,21 +21,21 @@ async function listAllCities() {
 }
 
 /**
- * Gets a city by ID.
- * @param {string} cityId - The ID of the city to get.\n * @returns {Promise<City>} The city.
+ * Returns a city by ID.
+ * @param cityId The ID of the city to retrieve.
  */
 async function getCityById(cityId: string) {
-  logger.debug(`Entering GET BY ID DAO- cities/ endpoint ${cityId}`);
+  logger.debug(`➡️ DAO: GET /cities/${cityId}`);
   return City.query().findById(cityId).column('id', 'name', 'country').withGraphFetched('event');
 }
 
+
 /**
  * Creates a new city.
- * @param {City} cityData - The city data.
- * @returns {Promise<City>} The new city.
+ * @param cityData The city data to insert.
  */
 async function createCity(cityData: City) {
-  logger.debug(`Entering CREATE DAO- cities/ endpoint ${cityData}`);
+  logger.debug('➡️ DAO: POST /cities', cityData);
   const newCity = await City.query().insert({
     name: cityData.name,
     country: cityData.country,
@@ -46,12 +45,11 @@ async function createCity(cityData: City) {
 
 /**
  * Updates a city by ID.
- * @param {string} cityId - The ID of the city to update.
- * @param {City} cityData - The new city data.
- * @returns {Promise<City>} The updated city.
+ * @param cityId The ID of the city to update.
+ * @param cityData The updated city data.
  */
 async function updateCityById(cityId: string, cityData: City) {
-  logger.debug(`Entering UPDATE DAO- cities/ endpoint ${cityData}`);
+  logger.debug(`➡️ DAO: PATCH /cities/${cityId}`, cityData);
   const updatedCity = await City.query()
     .findById(cityId)
     .patch({
@@ -64,11 +62,10 @@ async function updateCityById(cityId: string, cityData: City) {
 
 /**
  * Deletes a city by ID.
- * @param {string} cityId - The ID of the city to delete.
- * @returns {Promise<City>} The deleted city.
+ * @param cityId The ID of the city to delete.
  */
 async function deleteCityById(cityId: string) {
-  logger.debug(`Entering DELETE BY ID DAO- cities/ endpoint ${cityId}`);
+  logger.debug(`➡️ DAO: DELETE /cities/${cityId}`);
   const deletedCity = await City.query().delete().where({ id: cityId }).returning('*');
   return deletedCity;
 }
