@@ -1,83 +1,59 @@
-import knex, { Knex } from 'knex';
+import type { Knex } from 'knex';
+import { UserSourceData, EventSourceData } from '../../config/utils';
+import eventData from '../source/events.json';
+import userData from '../source/users.json';
+
 if (process.env.NODE_ENV === 'production') {
-  throw new Error('Can not run seeds in production enviroment');
+  throw new Error('❌ Cannot run seeds in production environment');
 }
 
-// Interface Objects for Source Data
-import { UserSourceData, EventSourceData } from '../../config/utils';
-
-// Import Source data
-import eventData = require('../source/events.json');
-import userData = require('../source/users.json');
+// Extract unique city names
 const cityData = eventData
   .map((event: EventSourceData) => event.city)
-  .filter((value: string, index: number, self: string[]) => self.indexOf(value) === index);
+  .filter((city, index, self) => self.indexOf(city) === index);
 
-// Seed data from source files
+// 🌱 Main seed function
 export async function seed(knex: Knex): Promise<void> {
-  // Deletes ALL existing entries
-  await knex('userCity')
-    .del()
-    .then(() => {
-      return knex('event').del();
-    })
-    .then(() => {
-      return knex('city').del();
-    })
-    .then(() => {
-      return knex('user').del();
-    })
-    // Creates new entries in db: uses helper functions below
-    .then(() => {
-      let cityPromises = [];
-      cityData.forEach((city: string) => {
-        cityPromises.push(createCity(knex, city));
-      });
-      return Promise.all(cityPromises);
-    })
-    .then(() => {
-      let eventPromises = [];
-      eventData.forEach((event: EventSourceData) => {
-        let city = event.city;
-        eventPromises.push(createEvent(knex, event, city));
-      });
-      return Promise.all(eventPromises);
-    })
-    .then(() => {
-      let userPromises = [];
-      userData.forEach((user: UserSourceData) => {
-        userPromises.push(createUser(knex, user));
-      });
-      return Promise.all(userPromises);
-    })
-    .then(() => {
-      let userCityPromises = [];
-      userData.forEach((user: UserSourceData) => {
-        userCityPromises.push(createUserCityData(knex, user));
-      });
-      return Promise.all(userCityPromises);
-    });
+  console.log('🌱 Seeding database...');
+
+  await knex.transaction(async (trx) => {
+    await trx('userCity').del();
+    await trx('event').del();
+    await trx('city').del();
+    await trx('user').del();
+
+    await Promise.all(cityData.map((city) => createCity(trx, city)));
+    await Promise.all(eventData.map((event) => createEvent(trx, event)));
+    await Promise.all(userData.map((user) => createUser(trx, user)));
+    await Promise.all(userData.map((user) => createUserCityData(trx, user)));
+  });
+
+  console.log('✅ Seeding complete');
 }
 
-// Helper Functions to insert the data into the db
-const createCity = (knex: Knex, city: string) => {
-  let countryName = eventData.find((event) => {
-    if (event.city === city) {
-      return event.country;
-    }
-  });
+// 🔧 Helper: Create a city
+const createCity = async (knex: Knex, city: string) => {
+  const event = eventData.find((e) => e.city === city);
+  if (!event) throw new Error(`❌ Country not found for city: ${city}`);
+
   return knex('city').insert({
     name: city,
-    country: countryName.country,
+    country: event.country,
   });
 };
-const createEvent = async (knex: Knex, event: EventSourceData, city: string) => {
-  const cityRecord = await knex('city').where('name', city).first();
-  return await knex('event').insert({
+
+// 🔧 Helper: Create an event
+const createEvent = async (knex: Knex, event: EventSourceData) => {
+  const city = await knex('city').where({ name: event.city }).first();
+  if (!city) throw new Error(`❌ City not found for event: ${event.title}`);
+
+  return knex('event').insert({
     title: event.title,
-    cityId: cityRecord.id,
+    cityId: city.id,
   });
 };
+
+// 🔧 Helper: Create a user
 const createUser = (knex: Knex, user: UserSourceData) => {
   return knex('user').insert({
     firstName: user.first_name,
@@ -85,18 +61,23 @@ const createUser = (knex: Knex, user: UserSourceData) => {
     email: user.email,
   });
 };
+
+// 🔧 Helper: Link user to cities
 const createUserCityData = async (knex: Knex, user: UserSourceData) => {
-  const userRecord = await knex('user').where('email', user.email).first();
-  let userCityPromises = [];
-  user.trips.forEach((city: string) => {
-    userCityPromises.push(createUserCity(knex, city, userRecord.id));
-  });
-  return await Promise.all(userCityPromises);
+  const userRecord = await knex('user').where({ email: user.email }).first();
+  if (!userRecord) throw new Error(`❌ User not found for email: ${user.email}`);
+
+  const promises = user.trips.map((city) => createUserCity(knex, city, userRecord.id));
+  return Promise.all(promises);
 };
-const createUserCity = async (knex: Knex, city: string, userId: number) => {
-  const cityRecord = await knex('city').where('name', city).first();
-  return await knex('userCity').insert({
-    userID: userId,
-    cityID: cityRecord.id,
+
+// 🔧 Helper: Link user-city
+const createUserCity = async (knex: Knex, cityName: string, userId: number) => {
+  const city = await knex('city').where({ name: cityName }).first();
+  if (!city) throw new Error(`❌ City not found for user-city trip: ${cityName}`);
+
+  return knex('userCity').insert({
+    userId,
+    cityId: city.id,
   });
 };
