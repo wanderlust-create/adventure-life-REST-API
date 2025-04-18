@@ -4,7 +4,6 @@ import UserService from '../api/services/user';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 
-
 const app = createServer();
 let server: Server;
 let baseUrl: string;
@@ -81,7 +80,14 @@ describe('User Controller', () => {
         .send({})
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe('email is a required field');
+      expect(response.body.message).toBe('Validation failed');
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining([
+          'firstName is a required field',
+          'lastName is a required field',
+          'email is a required field',
+        ])
+      );
       expect(createUserServiceMock).not.toHaveBeenCalled();
     });
   });
@@ -109,7 +115,7 @@ describe('User Controller', () => {
       expect(response.body).toStrictEqual({ error: 'No user found' });
     });
   });
-  
+
   describe('deleteUserById()', () => {
     it('returns 200 and the deleted user', async () => {
       const users = await UserService.listAllUsers();
