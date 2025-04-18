@@ -12,10 +12,10 @@ export default {
 /**
  * Returns all cities, ordered by creation date.
  */
-async function listAllCities() {
+async function listAllCities(): Promise<City[]> {
   logger.debug('➡️ DAO: GET /cities');
   return City.query()
-    .column('id', 'name', 'country')
+    .select('id', 'name', 'country')
     .orderBy('created_at', 'desc')
     .withGraphFetched('event');
 }
@@ -24,23 +24,21 @@ async function listAllCities() {
  * Returns a city by ID.
  * @param cityId The ID of the city to retrieve.
  */
-async function getCityById(cityId: string) {
+async function getCityById(cityId: string): Promise<City | undefined> {
   logger.debug(`➡️ DAO: GET /cities/${cityId}`);
-  return City.query().findById(cityId).column('id', 'name', 'country').withGraphFetched('event');
+  return City.query().findById(cityId).select('id', 'name', 'country').withGraphFetched('event');
 }
-
 
 /**
  * Creates a new city.
  * @param cityData The city data to insert.
  */
-async function createCity(cityData: City) {
+async function createCity(cityData: City): Promise<City> {
   logger.debug('➡️ DAO: POST /cities', cityData);
-  const newCity = await City.query().insert({
+  return City.query().insert({
     name: cityData.name,
     country: cityData.country,
   });
-  return newCity;
 }
 
 /**
@@ -64,8 +62,7 @@ async function updateCityById(cityId: string, cityData: City) {
  * Deletes a city by ID.
  * @param cityId The ID of the city to delete.
  */
-async function deleteCityById(cityId: string) {
+async function deleteCityById(cityId: string): Promise<City[]> {
   logger.debug(`➡️ DAO: DELETE /cities/${cityId}`);
-  const deletedCity = await City.query().delete().where({ id: cityId }).returning('*');
-  return deletedCity;
+  return City.query().delete().where({ id: cityId }).returning('*');
 }
