@@ -4,6 +4,7 @@ import EventService from '../api/services/event';
 import CityService from '../api/services/city';
 import UserService from '../api/services/user';
 import { Server } from 'http';
+import { AddressInfo } from 'net';
 const nonExistentId = '999999';
 type EventSummary = {
   id: number;
@@ -11,12 +12,14 @@ type EventSummary = {
   cityId: number;
 };
 
-
 const app = createServer();
 let server: Server;
+let baseUrl: string;
 
 beforeAll(async () => {
-  server = app.listen(8080);
+  server = app.listen(0); // 0 = random available port
+  const address = server.address() as AddressInfo;
+  baseUrl = `http://localhost:${address.port}`;
 });
 
 afterAll(async () => {
@@ -31,7 +34,7 @@ afterAll(async () => {
 describe('Event Controller', () => {
   describe('listEvents()', () => {
     it('returns 200 and the full list of events', async () => {
-      const response = await request(app).get(`/api/v1/events`);
+      const response = await request(baseUrl).get(`/api/v1/events`);
       expect(response.status).toBe(200);
       expect(response.body.length).toBeGreaterThan(0);
     });
@@ -39,7 +42,7 @@ describe('Event Controller', () => {
     it('returns events filtered by cityId', async () => {
       const cities = await CityService.listAllCities();
       const cityId = cities[0].id;
-      const response = await request(app).get(`/api/v1/events?cityId=${cityId}`);
+      const response = await request(baseUrl).get(`/api/v1/events?cityId=${cityId}`);
       expect(response.status).toBe(200);
       const filteredEventsByCity = response.body;
       filteredEventsByCity.forEach((event: EventSummary) => {
@@ -50,7 +53,7 @@ describe('Event Controller', () => {
     it('returns events filtered by userId', async () => {
       const users = await UserService.listAllUsers();
       const userId = users[0].id;
-      const response = await request(app).get(`/api/v1/events?userId=${userId}`);
+      const response = await request(baseUrl).get(`/api/v1/events?userId=${userId}`);
       expect(response.status).toBe(200);
       expect(response.body.id).toBe(userId);
       expect(response.body.city.length).toBeGreaterThan(0);
@@ -58,7 +61,7 @@ describe('Event Controller', () => {
 
     it('returns 404 when no events are returned', async () => {
       jest.spyOn(EventService, 'listAllEvents').mockResolvedValueOnce(undefined);
-      const response = await request(app).get(`/api/v1/events`);
+      const response = await request(baseUrl).get(`/api/v1/events`);
       expect(response.status).toBe(404);
     });
   });
@@ -67,14 +70,14 @@ describe('Event Controller', () => {
     it('returns 200 and the requested event', async () => {
       const events = await EventService.listAllEvents();
       const eventId = events[0].id;
-      const response = await request(app).get(`/api/v1/events/${eventId}`);
+      const response = await request(baseUrl).get(`/api/v1/events/${eventId}`);
       expect(response.status).toBe(200);
       expect(response.body.id).toBe(events[0].id);
       expect(response.body.title).toBe(events[0].title);
     });
 
     it('returns 404 when the evenId does not exist', async () => {
-      const response = await request(app).get(`/api/v1/events/${nonExistentId}`);
+      const response = await request(baseUrl).get(`/api/v1/events/${nonExistentId}`);
       expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({ error: 'No event found' });
     });
@@ -85,7 +88,7 @@ describe('Event Controller', () => {
       const cities = await CityService.listAllCities();
       const cityId = cities[0].id;
       const newEvent = { title: 'New Event', cityId: cityId };
-      const response = await request(app)
+      const response = await request(baseUrl)
         .post(`/api/v1/events`)
         .send(newEvent)
         .set('Accept', 'application/json');
@@ -98,7 +101,7 @@ describe('Event Controller', () => {
       const createEventServiceMock = jest
         .spyOn(EventService, 'createEvent')
         .mockResolvedValueOnce(undefined);
-      const response = await request(app)
+      const response = await request(baseUrl)
         .post(`/api/v1/events`)
         .send({})
         .set('Accept', 'application/json');
@@ -113,7 +116,7 @@ describe('Event Controller', () => {
       const events = await EventService.listAllEvents();
       const updatedEvent = { ...events[0], title: 'Updated Event' };
       const updatedEventId = updatedEvent.id;
-      const response = await request(app)
+      const response = await request(baseUrl)
         .patch(`/api/v1/events/${updatedEventId}`)
         .send(updatedEvent)
         .set('Accept', 'application/json');
@@ -123,7 +126,7 @@ describe('Event Controller', () => {
     });
 
     it('returns 404 when eventId does not exist', async () => {
-      const response = await request(app)
+      const response = await request(baseUrl)
         .patch(`/api/v1/events/${nonExistentId}`)
         .send({})
         .set('Accept', 'application/json');
@@ -135,13 +138,13 @@ describe('Event Controller', () => {
   describe('deleteEventById()', () => {
     it('returns 200 and the deleted event', async () => {
       const events = await EventService.listAllEvents();
-      const response = await request(app).delete(`/api/v1/events/${events[0].id}`);
+      const response = await request(baseUrl).delete(`/api/v1/events/${events[0].id}`);
       expect(response.status).toBe(200);
       expect(response.body.deletedEvent[0].id).toBe(events[0].id);
     });
 
     it('returns 404 when the eventId does not exist', async () => {
-      const response = await request(app).delete(`/api/v1/events/${nonExistentId}`);
+      const response = await request(baseUrl).delete(`/api/v1/events/${nonExistentId}`);
       expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({ error: 'No event found' });
     });
