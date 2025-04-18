@@ -5,13 +5,14 @@ import User from './user';
 
 class City extends Model {
   static tableName = 'city';
-  readonly id!: number;
+
+  readonly id: number;
   name!: string;
   country!: string;
   createdAt?: Date;
   updatedAt?: Date;
 
-  //optional
+  // Optional relations
   event?: Event[];
   user?: User[];
 
@@ -37,7 +38,7 @@ class City extends Model {
     },
     user: {
       relation: Model.ManyToManyRelation,
-      modelClass: join(__dirname, 'users'),
+      modelClass: join(__dirname, 'user'), // 👈 fixed typo
       join: {
         from: 'city.id',
         through: {
