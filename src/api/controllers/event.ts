@@ -1,7 +1,6 @@
 import * as express from 'express';
 import logger from '../../loaders/logger';
 import EventService from '../services/event';
-import Event from '../models/event';
 import User from '../models/user';
 import City from '../models/city';
 
@@ -13,7 +12,6 @@ export default {
   deleteEventById,
 };
 
-// 🔍 GET /events
 async function listEvents(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET CONTROLLER - /events endpoint.`);
   const { cityId, userId } = req.query;
@@ -32,7 +30,6 @@ async function listEvents(req: express.Request, res: express.Response): Promise<
   }
 }
 
-// 🔍 GET /events/:id
 async function getEventById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering GET BY ID CONTROLLER - /events/:id endpoint.`);
   try {
@@ -48,7 +45,6 @@ async function getEventById(req: express.Request, res: express.Response): Promis
   }
 }
 
-// ✨ POST /events
 async function createEvent(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering CREATE CONTROLLER - /events endpoint.`);
   try {
@@ -64,7 +60,6 @@ async function createEvent(req: express.Request, res: express.Response): Promise
   }
 }
 
-// 🔧 PATCH /events/:id
 async function updateEventById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering UPDATE CONTROLLER - /events/:id endpoint.`);
   try {
@@ -80,7 +75,6 @@ async function updateEventById(req: express.Request, res: express.Response): Pro
   }
 }
 
-// 🗑 DELETE /events/:id
 async function deleteEventById(req: express.Request, res: express.Response): Promise<void> {
   logger.debug(`Entering DELETE CONTROLLER - /events/:id endpoint.`);
   try {
@@ -125,5 +119,9 @@ async function getUserEvents(userId: string, res: express.Response) {
 
 async function getAllEvents(res: express.Response) {
   const events = await EventService.listAllEvents();
+  if (!events || events.length === 0) {
+    res.status(404).json({ error: 'No events found' });
+    return;
+  }
   res.json(events);
 }
