@@ -48,7 +48,7 @@ async function createCity(req: express.Request, res: express.Response): Promise<
       res.status(404).json({ error: 'City was not created' });
       return;
     } else {
-      res.json(newCity);
+      res.status(201).json(newCity);
     }
   } catch (err) {
     logger.error(err);
