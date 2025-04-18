@@ -1,27 +1,27 @@
+import express from 'express';
+import morgan from 'morgan';
 import { Model } from 'objection';
 
-// import express from "express";
-import express from 'express';
-
-// Load HTTP request logger
-import morgan from 'morgan';
-
-// Routes
 import api from '../api';
-
-// Db connection
 import connection from '../loaders/dbSetup';
-
-// error handling
 import apiErrorHandler from '../api/reqBodyValidation/error/apiErrorHandler';
 
 function createServer() {
   const app = express();
+
+  // Bind knex instance to objection Model
   Model.knex(connection);
+
+  // Middleware
   app.use(express.json());
   app.use(morgan('combined'));
+
+  // Routes
   app.use('/', api);
+
+  // Global error handler
   app.use(apiErrorHandler);
+
   return app;
 }
 
