@@ -48,7 +48,7 @@ async function createUser(req: express.Request, res: express.Response): Promise<
       res.status(404).json({ error: 'User was not created' });
       return;
     } else {
-      res.json(newUser);
+      res.status(201).json(newUser);
     }
   } catch (err) {
     logger.error(err);
