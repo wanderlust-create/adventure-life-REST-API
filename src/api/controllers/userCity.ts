@@ -31,7 +31,7 @@ async function createUserCity(req: express.Request, res: express.Response): Prom
       res.status(404).json({ error: `User-city not created` });
       return;
     } else {
-      res.json(newUserCity);
+      res.status(201).json(newUserCity);
     }
   } catch (err) {
     logger.error(err);

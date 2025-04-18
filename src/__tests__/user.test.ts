@@ -2,32 +2,26 @@ import request from 'supertest';
 import createServer from '../loaders/server';
 import UserService from '../api/services/user';
 
-import logger from '../loaders/logger';
-
 let app = createServer();
 let server: any;
 
-beforeAll((done) => {
-  server = app.listen(8080, () => {
-    done();
-  });
+beforeAll(async () => {
+  server = app.listen(8080);
 });
 
-afterAll((done) => {
-  server.close(() => {
-    done();
-  });
+afterAll(async () => {
+  await server.close();
 });
 
 describe('User Controller', () => {
   describe('listAllUsers()', () => {
-    it('should return 200 OK and all users', async () => {
+    it('returns 200 and the full list of users', async () => {
       const response = await request(app).get(`/api/v1/users`);
       expect(response.status).toBe(200);
       expect(response.body.length).toBeGreaterThan(0);
     });
 
-    it('should return 404 Not Found when there are no users', async () => {
+    it('returns 404 when there are no users', async () => {
       jest.spyOn(UserService, 'listAllUsers').mockResolvedValueOnce(undefined);
       const response = await request(app).get(`/api/v1/users`);
       expect(response.status).toBe(404);
@@ -35,7 +29,7 @@ describe('User Controller', () => {
     });
   });
   describe('getUserById()', () => {
-    it('should return 200 OK and the requested user', async () => {
+    it('returns 200 and the requested user', async () => {
       const users = await UserService.listAllUsers();
       const userId = users[0].id;
       const response = await request(app).get(`/api/v1/users/${userId}`);
@@ -44,14 +38,14 @@ describe('User Controller', () => {
       expect(response.body.firstName).toBe(users[0].firstName);
     });
 
-    it('should return 404 Not Found when the user with the given id does not exist', async () => {
+    it('returns 404 when the userId does not exist', async () => {
       const response = await request(app).get(`/api/v1/users/123`);
       expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({ error: 'No user found' });
     });
   });
   describe('createUser()', () => {
-    it('should return 200 OK and the created user', async () => {
+    it('returns 201 and the created user', async () => {
       const newUser = {
         firstName: 'New User First',
         lastName: 'New User Last',
@@ -61,11 +55,11 @@ describe('User Controller', () => {
         .post(`/api/v1/users`)
         .send(newUser)
         .set('Accept', 'application/json');
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(201);
       expect(response.body.email).toBe('newUser@email.com');
     });
 
-    it('should return 400 Error when required information is not provided when creating a new user', async () => {
+    it('returns 400 if missing information when creating a user', async () => {
       const createUserServiceMock = jest
         .spyOn(UserService, 'createUser')
         .mockResolvedValueOnce(undefined);
@@ -79,7 +73,7 @@ describe('User Controller', () => {
     });
   });
   describe('updateUserById()', () => {
-    it('should return 200 OK and the updated user', async () => {
+    it('returns 200 and the updated user', async () => {
       const users = await UserService.listAllUsers();
       const updatedUser = { ...users[0], email: 'newUpdatedEmail@email.com' };
       const updatedUserId = updatedUser.id;
@@ -92,7 +86,7 @@ describe('User Controller', () => {
       expect(response.body.email).toBe('newUpdatedEmail@email.com');
     });
 
-    it('should return 404 No User Found when the user with the given id does not exist', async () => {
+    it('returns 404 No User Found when userId does not exist', async () => {
       const response = await request(app)
         .patch('/api/v1/users/123')
         .send({})
@@ -102,14 +96,14 @@ describe('User Controller', () => {
     });
   });
   describe('deleteUserById()', () => {
-    it('should return 200 OK and the deleted user', async () => {
+    it('returns 200 and the deleted user', async () => {
       const users = await UserService.listAllUsers();
       const response = await request(app).delete(`/api/v1/users/${users[0].id}`);
       expect(response.status).toBe(200);
       expect(response.body.deletedUser[0].id).toBe(users[0].id);
     });
 
-    it('should return 404 Not Found when the user with the given id does not exist', async () => {
+    it('returns 404 Not when the userId does not exist', async () => {
       const response = await request(app).delete('/api/v1/users/123');
       expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({ error: 'No user found' });
