@@ -13,69 +13,62 @@ export default {
 };
 
 /**
- * Returns an array of all events, sorted by date.
- * @returns {Promise<Event[]>} The events.
+ * Returns all events, sorted by creation date.
  */
-async function listAllEvents() {
-  logger.debug(`Entering GET DAO- events/ endpoint.`);
-  return Event.query().column('id', 'title').orderBy('created_at', 'desc').withGraphFetched('city');
+async function listAllEvents(): Promise<Event[]> {
+  logger.debug('➡️ DAO: GET /events');
+  return Event.query().select('id', 'title').orderBy('created_at', 'desc').withGraphFetched('city');
 }
 
 /**
  * Gets an event by ID.
- * @param {string} eventId - The ID of the event to get.
- * @returns {Promise<Event>} The event.
+ * @param eventId The ID of the event.
  */
-async function getEventById(eventId: string) {
-  logger.debug(`Entering GET BY ID DAO- events/ endpoint ${eventId}`);
-  return Event.query().findById(eventId).column('id', 'title').withGraphFetched('city');
+async function getEventById(eventId: string): Promise<Event | undefined> {
+  logger.debug(`➡️ DAO: GET /events/${eventId}`);
+  return Event.query().findById(eventId).select('id', 'title').withGraphFetched('city');
 }
 
 /**
  * Filters events by city ID.
- * @param {string} cityId - The ID of the city to filter by.
- * @returns {Promise<Event[]>} The events.
+ * @param cityId The ID of the city.
  */
-async function filterEventsByCityId(cityId: string) {
-  logger.debug(`Entering FILTER BY CITY DAO- events/ endpoint ${cityId}`);
+async function filterEventsByCityId(cityId: string): Promise<Event[]> {
+  logger.debug(`➡️ DAO: GET /events?cityId=${cityId}`);
   return Event.query().select('id', 'title', 'cityId').where('cityId', cityId);
 }
 
 /**
  * Filters events by user ID.
- * @param {string} userId - The ID of the user to filter by.
- * @returns {Promise<User>} The user, with their associated city and events.
+ * @param userId The ID of the user.
  */
-async function filterEventsByUserId(userId: string) {
-  logger.debug(`Entering FILTER BY USER DAO- events/ endpoint ${userId}`);
+async function filterEventsByUserId(userId: string): Promise<User | undefined> {
+  logger.debug(`➡️ DAO: GET /events?userId=${userId}`);
   return User.query()
     .findById(userId)
-    .column('id', 'firstName', 'lastName')
-    .withGraphFetched('[city.[event]]');
+    .select('id', 'firstName', 'lastName')
+    .withGraphFetched('city.event');
 }
 
 /**
  * Creates a new event.
- * @param {Event} eventData - The event data.
- * @returns {Promise<Event>} The new event.
+ * @param eventData The event to create.
  */
-async function createEvent(eventData: Event) {
-  logger.debug(`Entering CREATE DAO- events/ endpoint ${eventData}`);
-  const newEvent = await Event.query().insert({
+async function createEvent(eventData: Event): Promise<Event> {
+  logger.debug('➡️ DAO: POST /events', eventData);
+  return Event.query().insert({
     cityId: eventData.cityId,
     title: eventData.title,
   });
-  return newEvent;
 }
 
 /**
  * Updates an event by ID.
- * @param {string} eventId - The ID of the event to update.
- * @param {Event} eventData - The new event data.
- * @returns {Promise<Event>} The updated event.
+ * @param eventId The ID of the event to update.
+ * @param eventData The updated event data.
  */
 async function updateEventById(eventId: string, eventData: Event) {
-  logger.debug(`Entering UPDATE DAO- events/ endpoint ${eventData}`);
+  logger.debug(`➡️ DAO: PATCH /events/${eventId}`, eventData);
   const updatedEvent = await Event.query()
     .findById(eventId)
     .patch({
@@ -88,11 +81,10 @@ async function updateEventById(eventId: string, eventData: Event) {
 
 /**
  * Deletes an event by ID.
- * @param {string} eventId - The ID of the event to delete.
- * @returns {Promise<Event>} The deleted event.
+ * @param eventId The ID of the event to delete.
  */
-async function deleteEventById(eventId: string) {
-  logger.debug(`Entering DELETE BY ID DAO- events/ endpoint ${eventId}`);
+async function deleteEventById(eventId: string): Promise<Event[]> {
+  logger.debug(`➡️ DAO: DELETE /events/${eventId}`);
   const deletedEvent = await Event.query().delete().where({ id: eventId }).returning('*');
   return deletedEvent;
 }
