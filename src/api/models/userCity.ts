@@ -1,4 +1,4 @@
-import { Model, RelationMappings } from 'objection';
+import { Model } from 'objection';
 import { join } from 'path';
 import City from './city';
 import User from './user';
