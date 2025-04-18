@@ -3,17 +3,29 @@ import createServer from '../loaders/server';
 import EventService from '../api/services/event';
 import CityService from '../api/services/city';
 import UserService from '../api/services/user';
+import { Server } from 'http';
 const nonExistentId = '999999';
+type EventSummary = {
+  id: number;
+  title: string;
+  cityId: number;
+};
 
-let app = createServer();
-let server: any;
+
+const app = createServer();
+let server: Server;
 
 beforeAll(async () => {
   server = app.listen(8080);
 });
 
 afterAll(async () => {
-  await server.close();
+  await new Promise<void>((resolve, reject) => {
+    server.close((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 });
 
 describe('Event Controller', () => {
@@ -23,16 +35,18 @@ describe('Event Controller', () => {
       expect(response.status).toBe(200);
       expect(response.body.length).toBeGreaterThan(0);
     });
+
     it('returns events filtered by cityId', async () => {
       const cities = await CityService.listAllCities();
       const cityId = cities[0].id;
       const response = await request(app).get(`/api/v1/events?cityId=${cityId}`);
       expect(response.status).toBe(200);
       const filteredEventsByCity = response.body;
-      filteredEventsByCity.forEach((event: any) => {
+      filteredEventsByCity.forEach((event: EventSummary) => {
         expect(event.cityId).toBe(cityId);
       });
     });
+
     it('returns events filtered by userId', async () => {
       const users = await UserService.listAllUsers();
       const userId = users[0].id;
@@ -41,12 +55,14 @@ describe('Event Controller', () => {
       expect(response.body.id).toBe(userId);
       expect(response.body.city.length).toBeGreaterThan(0);
     });
+
     it('returns 404 when no events are returned', async () => {
       jest.spyOn(EventService, 'listAllEvents').mockResolvedValueOnce(undefined);
       const response = await request(app).get(`/api/v1/events`);
       expect(response.status).toBe(404);
     });
   });
+
   describe('getEventById()', () => {
     it('returns 200 and the requested event', async () => {
       const events = await EventService.listAllEvents();
@@ -63,6 +79,7 @@ describe('Event Controller', () => {
       expect(response.body).toStrictEqual({ error: 'No event found' });
     });
   });
+
   describe('createEvent()', () => {
     it('returns 201 and the created event', async () => {
       const cities = await CityService.listAllCities();
@@ -90,6 +107,7 @@ describe('Event Controller', () => {
       expect(createEventServiceMock).not.toHaveBeenCalled();
     });
   });
+
   describe('updateEventById()', () => {
     it('returns 200 and the updated event', async () => {
       const events = await EventService.listAllEvents();
@@ -104,7 +122,7 @@ describe('Event Controller', () => {
       expect(response.body.title).toBe('Updated Event');
     });
 
-    it('returns 404 No Event Found when eventId does not exist', async () => {
+    it('returns 404 when eventId does not exist', async () => {
       const response = await request(app)
         .patch(`/api/v1/events/${nonExistentId}`)
         .send({})
@@ -113,6 +131,7 @@ describe('Event Controller', () => {
       expect(response.body).toStrictEqual({ error: 'No event found' });
     });
   });
+
   describe('deleteEventById()', () => {
     it('returns 200 and the deleted event', async () => {
       const events = await EventService.listAllEvents();
