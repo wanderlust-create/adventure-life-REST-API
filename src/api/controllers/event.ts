@@ -3,6 +3,7 @@ import logger from '../../loaders/logger';
 import EventService from '../services/event';
 import Event from '../models/event';
 import User from '../models/user';
+import City from '../models/city';
 
 export default {
   listEvents,
@@ -12,38 +13,32 @@ export default {
   deleteEventById,
 };
 
+// 🔍 GET /events
 async function listEvents(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering GET CONTROLLER - events/ endpoint.`);
-  type ReturnValue = User | Event[];
-  let events: ReturnValue = [];
-  if (req.query.cityId) {
-    let cityId = req.query.cityId as string;
-    events = await EventService.filterEventsByCityId(cityId);
-  } else if (req.query.userId) {
-    let userId = req.query.userId as string;
-    events = await EventService.filterEventsByUserId(userId);
-  } else {
-    events = await EventService.listAllEvents();
-  }
+  logger.debug(`Entering GET CONTROLLER - /events endpoint.`);
+  const { cityId, userId } = req.query;
+
   try {
-    if (!events) {
-      res.status(404).json({ error: `No events found` });
-      return;
+    if (cityId) {
+      await getCityEvents(cityId as string, res);
+    } else if (userId) {
+      await getUserEvents(userId as string, res);
     } else {
-      res.json(events);
+      await getAllEvents(res);
     }
   } catch (err) {
-    logger.error(err);
-    res.status(500).send(err);
+    logger.error('❌ Error in listEvents controller', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
+// 🔍 GET /events/:id
 async function getEventById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering GET BY ID CONTROLLER - events/ endpoint.`);
-  const event = await EventService.getEventById(req.params.id);
+  logger.debug(`Entering GET BY ID CONTROLLER - /events/:id endpoint.`);
   try {
-    if (event === undefined) {
+    const event = await EventService.getEventById(req.params.id);
+    if (!event) {
       res.status(404).json({ error: 'No event found' });
-      return;
     } else {
       res.json(event);
     }
@@ -52,13 +47,14 @@ async function getEventById(req: express.Request, res: express.Response): Promis
     res.status(500).json(err);
   }
 }
+
+// ✨ POST /events
 async function createEvent(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering CREATE CONTROLLER - events/ endpoint.`);
-  const newEvent = await EventService.createEvent(req.body);
+  logger.debug(`Entering CREATE CONTROLLER - /events endpoint.`);
   try {
-    if (newEvent === undefined) {
-      res.status(404).json({ error: 'Event was not created' });
-      return;
+    const newEvent = await EventService.createEvent(req.body);
+    if (!newEvent) {
+      res.status(400).json({ error: 'Event was not created' });
     } else {
       res.status(201).json(newEvent);
     }
@@ -67,14 +63,14 @@ async function createEvent(req: express.Request, res: express.Response): Promise
     res.status(500).json(err);
   }
 }
+
+// 🔧 PATCH /events/:id
 async function updateEventById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering UPDATE CONTROLLER - events/ endpoint.`);
-  const id = req.params.id;
-  const updatedEvent = await EventService.updateEventById(id, req.body);
+  logger.debug(`Entering UPDATE CONTROLLER - /events/:id endpoint.`);
   try {
+    const updatedEvent = await EventService.updateEventById(req.params.id, req.body);
     if (!updatedEvent) {
       res.status(404).json({ error: 'No event found' });
-      return;
     } else {
       res.json(updatedEvent);
     }
@@ -83,14 +79,14 @@ async function updateEventById(req: express.Request, res: express.Response): Pro
     res.status(500).json(err);
   }
 }
+
+// 🗑 DELETE /events/:id
 async function deleteEventById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering DELETE CONTROLLER - events/ endpoint.`);
+  logger.debug(`Entering DELETE CONTROLLER - /events/:id endpoint.`);
   try {
-    const id = req.params.id;
-    const deletedEvent = await EventService.deleteEventById(id);
-    if (deletedEvent.length === 0) {
+    const deletedEvent = await EventService.deleteEventById(req.params.id);
+    if (!deletedEvent || deletedEvent.length === 0) {
       res.status(404).json({ error: 'No event found' });
-      return;
     } else {
       logger.info('Event Deleted:', deletedEvent);
       res.json({ alert: 'Event Deleted', deletedEvent });
@@ -99,4 +95,35 @@ async function deleteEventById(req: express.Request, res: express.Response): Pro
     logger.error(err);
     res.status(500).json(err);
   }
+}
+
+//
+// 🧩 Internal Helpers (module-scoped only)
+//
+
+async function getCityEvents(cityId: string, res: express.Response) {
+  const city = await City.query().findById(cityId);
+  if (!city) {
+    res.status(404).json({ error: `City with id ${cityId} not found.` });
+    return;
+  }
+
+  const events = await EventService.filterEventsByCityId(cityId);
+  res.json(events);
+}
+
+async function getUserEvents(userId: string, res: express.Response) {
+  const user = await User.query().findById(userId);
+  if (!user) {
+    res.status(404).json({ error: `User with id ${userId} not found.` });
+    return;
+  }
+
+  const events = await EventService.filterEventsByUserId(userId);
+  res.json(events);
+}
+
+async function getAllEvents(res: express.Response) {
+  const events = await EventService.listAllEvents();
+  res.json(events);
 }
