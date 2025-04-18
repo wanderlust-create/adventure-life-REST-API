@@ -18,22 +18,17 @@ async function listEvents(req: Request, res: Response): Promise<void> {
   const { cityId, userId } = req.query;
 
   try {
-    if (cityId) {
-      await getCityEvents(cityId as string, res);
-    } else if (userId) {
-      await getUserEvents(userId as string, res);
-    } else {
-      await getAllEvents(res);
-    }
+    if (cityId) return await getCityEvents(cityId as string, res);
+    if (userId) return await getUserEvents(userId as string, res);
+    return await getAllEvents(res);
   } catch (err) {
-    logger.error('❌ Error in listEvents controller', err);
+    logger.error('❌ Error in listEvents()', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
 async function getEventById(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ GET /events/:id');
-
   try {
     const event = await EventService.getEventById(req.params.id);
     if (!event) {
@@ -49,7 +44,6 @@ async function getEventById(req: Request, res: Response): Promise<void> {
 
 async function createEvent(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ POST /events');
-
   try {
     const newEvent = await EventService.createEvent(req.body);
     if (!newEvent) {
@@ -65,7 +59,6 @@ async function createEvent(req: Request, res: Response): Promise<void> {
 
 async function updateEventById(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ PATCH /events/:id');
-
   try {
     const updatedEvent = await EventService.updateEventById(req.params.id, req.body);
     if (!updatedEvent) {
@@ -81,7 +74,6 @@ async function updateEventById(req: Request, res: Response): Promise<void> {
 
 async function deleteEventById(req: Request, res: Response): Promise<void> {
   logger.debug('➡️ DELETE /events/:id');
-
   try {
     const deletedEvent = await EventService.deleteEventById(req.params.id);
     if (!deletedEvent || deletedEvent.length === 0) {
