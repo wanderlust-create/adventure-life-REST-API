@@ -16,7 +16,7 @@ export default function apiErrorHandler(
   }
 
   if (err instanceof ApiError) {
-    return res.status(err.code).json({ error: err.message });
+    return res.status(err.code).json(err.message);
   }
 
   return res.status(500).json({ error: 'An unexpected error occurred' });
