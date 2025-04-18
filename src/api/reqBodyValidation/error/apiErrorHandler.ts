@@ -7,7 +7,7 @@ export default function apiErrorHandler(
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ) {
   try {
     logger.error(`Error during ${req.method} ${req.url}:`, err);
@@ -16,7 +16,9 @@ export default function apiErrorHandler(
   }
 
   if (err instanceof ApiError) {
-    return res.status(err.code).json(err.message);
+    return res
+      .status(err.code)
+      .json(typeof err.message === 'object' ? err.message : { error: err.message });
   }
 
   return res.status(500).json({ error: 'An unexpected error occurred' });
