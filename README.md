@@ -100,7 +100,7 @@ http://localhost:<PORT>/api-docs
 - Covers all 404 and validation scenarios
 
 To import:
-1. Open Postman → Import → Upload JSON from `/src/docs` or root directory
+1. Open Postman → Import → Upload JSON from `/src/docs` 
 
 ---
 
