@@ -10,8 +10,8 @@
     "allowJs": true,
     "noEmit": false,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["./src/**/*", "./src/**/**/*.json"],
+  "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["node_modules"]
 }
