@@ -76,7 +76,10 @@ describe('City Controller', () => {
         .send({})
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe('country is a required field');
+      expect(response.body.message).toBe('Validation failed');
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining(['name is a required field', 'country is a required field'])
+      );
       expect(createCityServiceMock).not.toHaveBeenCalled();
     });
   });

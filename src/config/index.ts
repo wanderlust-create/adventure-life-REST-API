@@ -1,40 +1,34 @@
 import * as dotenv from 'dotenv';
 import { isInteger } from './utils';
 
-// Set the NODE_ENV to 'development' by default
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+// Default to development environment
+process.env.NODE_ENV ||= 'development';
 
-// load .env file
+// Load .env variables
 const envFound = dotenv.config();
 if (!envFound) {
-  throw new Error('⚠️Could not find .env file⚠️');
+  throw new Error('⚠️ Could not load .env file');
 }
 
-// check that process.env.PORT is an integer
-const findPORT = function () {
+// Dynamically determine port from env or fallback
+function resolvePort(): number {
   const portArg = process.env.PORT;
-  let port: number;
-  if (isInteger(portArg)) {
-    port = parseInt(portArg);
-  }
-  if (!port) {
-    port = 3000;
-  }
-  return port;
-};
+  return isInteger(portArg) ? parseInt(portArg) : 3000;
+}
 
-// Define port number
-const port = findPORT();
-
-export default {
-  DB_NAME: process.env.DB_NAME,
-  TEST_DB_NAME: process.env.TEST_DB_NAME,
-  DB_PASSWORD: process.env.DB_PASSWORD,
-  DB_USER: process.env.DB_USER,
-  LOG_LEVEL: process.env.LOG_LEVEL || 'silly',
-  PORT: port,
+const config = {
   NODE_ENV: process.env.NODE_ENV,
+  PORT: resolvePort(),
+  LOG_LEVEL: process.env.LOG_LEVEL || 'silly',
+
+  DB_NAME: process.env.DB_NAME,
+  TEST_DB_NAME: process.env.DB_NAME_TEST || process.env.TEST_DB_NAME,
+  DB_USER: process.env.DB_USER,
+  DB_PASSWORD: process.env.DB_PASSWORD,
+
   API: {
     PREFIX: '/api/v1',
   },
 };
+
+export default config;

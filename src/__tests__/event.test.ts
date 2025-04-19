@@ -106,7 +106,10 @@ describe('Event Controller', () => {
         .send({})
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe('title is a required field');
+      expect(response.body.message).toBe('Validation failed');
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining(['cityId is a required field', 'title is a required field'])
+      );
       expect(createEventServiceMock).not.toHaveBeenCalled();
     });
   });

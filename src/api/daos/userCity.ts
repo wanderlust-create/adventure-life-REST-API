@@ -8,35 +8,30 @@ export default {
 };
 
 /**
- * Returns an array of all userCities, sorted by date.
- * @returns {Promise<UserCity[]>} The cities.
+ * Returns all user-city records, ordered by creation date.
  */
 async function listAllUserCities(): Promise<UserCity[]> {
-  logger.debug(`Entering GET ALL DAO- user-cities endpoint`);
-  return UserCity.query().column('id', 'userId', 'cityId').orderBy('created_at', 'desc');
+  logger.debug('➡️ DAO: GET /user-cities');
+  return UserCity.query().select('id', 'userId', 'cityId').orderBy('created_at', 'desc');
 }
 
 /**
- * Creates a new userCity.
- * @param {userCityDto} userCityDto - The user city data.
- * @returns {Promise<UserCity>} The new user city.
+ * Creates a new user-city relation.
+ * @param userCityDto The user-city data to insert.
  */
-async function createUserCity(userCityDto: UserCity) {
-  logger.debug(`Entering CREATE DAO- user-cities endpoint`);
-  const newUserCity = await UserCity.query().insert({
+async function createUserCity(userCityDto: UserCity): Promise<UserCity> {
+  logger.debug('➡️ DAO: POST /user-cities', userCityDto);
+  return UserCity.query().insert({
     userId: userCityDto.userId,
     cityId: userCityDto.cityId,
   });
-  return newUserCity;
 }
 
 /**
- * Deletes a userCity by ID.
- * @param {string} id - The ID of the userCity to delete.
- * @returns {Promise<UserCity>} The deleted userCity.
+ * Deletes a user-city relation by ID.
+ * @param id The ID of the user-city record to delete.
  */
-async function deleteUserCityById(id: string) {
-  logger.debug(`Entering DELETE DAO- user-cities endpoint`);
-  const deletedUserCity = await UserCity.query().delete().where({ id }).returning('*');
-  return deletedUserCity;
+async function deleteUserCityById(id: string): Promise<UserCity[]> {
+  logger.debug(`➡️ DAO: DELETE /user-cities/${id}`);
+  return UserCity.query().delete().where({ id }).returning('*');
 }

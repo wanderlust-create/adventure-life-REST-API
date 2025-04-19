@@ -1,4 +1,4 @@
-import * as express from 'express';
+import { Request, Response } from 'express';
 import logger from '../../loaders/logger';
 import UserCityService from '../services/userCity';
 
@@ -8,50 +8,52 @@ export default {
   deleteUserCityById,
 };
 
-async function listAllUserCities(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering GET ALL CONTROLLER - user-cities endpoint.`);
-  const userCities = await UserCityService.listAllUserCities();
+async function listAllUserCities(req: Request, res: Response): Promise<void> {
+  logger.debug('➡️ GET /user-cities');
   try {
-    if (!userCities) {
+    const userCities = await UserCityService.listAllUserCities();
+    if (!userCities || userCities.length === 0) {
       res.status(404).json({ error: `No user-cities found` });
       return;
     } else {
       res.json(userCities);
     }
   } catch (err) {
-    logger.error(err);
+    logger.error('❌ Error in listAllUserCities()', err);
     res.status(500).json(err);
   }
 }
-async function createUserCity(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering CREATE CONTROLLER - user-cities endpoint.`);
-  const newUserCity = await UserCityService.createUserCity(req.body);
+
+async function createUserCity(req: Request, res: Response): Promise<void> {
+  logger.debug('➡️ POST /user-cities');
   try {
-    if (newUserCity === undefined) {
-      res.status(404).json({ error: `User-city not created` });
+    const newUserCity = await UserCityService.createUserCity(req.body);
+    if (!newUserCity) {
+      res.status(400).json({ error: `User-city not created` });
       return;
     } else {
       res.status(201).json(newUserCity);
     }
   } catch (err) {
-    logger.error(err);
+    logger.error('❌ Error in createUserCity()', err);
     res.status(500).json(err);
   }
 }
-async function deleteUserCityById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering DELETE CONTROLLER - user-cities endpoint.`);
-  const id = req.params.id;
-  const deletedUserCity = await UserCityService.deleteUserCityById(id);
+
+async function deleteUserCityById(req: Request, res: Response): Promise<void> {
+  logger.debug('➡️ DELETE /user-cities/:id');
   try {
-    if (deletedUserCity.length === 0) {
+    const id = req.params.id;
+    const deletedUserCity = await UserCityService.deleteUserCityById(id);
+    if (!deletedUserCity || deletedUserCity.length === 0) {
       res.status(404).json({ error: `User-city not found` });
       return;
     } else {
-      logger.info('User-City deleted:', deletedUserCity);
+      logger.info('🗑️ User-City deleted:', deletedUserCity);
       res.json({ alert: 'User-City Deleted', deletedUserCity });
     }
   } catch (err) {
-    logger.error(err);
+    logger.error('❌ Error in deleteUserCityById()', err);
     res.status(500).json(err);
   }
 }

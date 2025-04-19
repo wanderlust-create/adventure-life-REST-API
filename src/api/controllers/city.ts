@@ -1,4 +1,4 @@
-import * as express from 'express';
+import { Request, Response } from 'express';
 import logger from '../../loaders/logger';
 import CityService from '../services/city';
 
@@ -10,81 +10,78 @@ export default {
   deleteCityById,
 };
 
-async function listAllCities(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering GET All CONTROLLER - cities/ endpoint.`);
-  const cities = await CityService.listAllCities();
+async function listAllCities(req: Request, res: Response): Promise<void> {
+  logger.debug('GET /cities - listAllCities');
   try {
+    const cities = await CityService.listAllCities();
     if (!cities) {
-      res.status(404).json({ error: `No cities found` });
-      return;
+      res.status(404).json({ error: 'No cities found' });
     } else {
       res.json(cities);
     }
   } catch (err) {
-    logger.error(err);
-    res.status(500).send(err);
+    logger.error('Error in listAllCities:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
-async function getCityById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering GET BY ID CONTROLLER - cities/ endpoint.`);
-  const city = await CityService.getCityById(req.params.id);
+
+async function getCityById(req: Request, res: Response): Promise<void> {
+  logger.debug(`GET /cities/${req.params.id} - getCityById`);
   try {
-    if (city === undefined) {
+    const city = await CityService.getCityById(req.params.id);
+    if (!city) {
       res.status(404).json({ error: 'No city found' });
-      return;
     } else {
       res.json(city);
     }
   } catch (err) {
-    logger.error(err);
-    res.status(500).json(err);
+    logger.error('Error in getCityById:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
-async function createCity(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering CREATE CONTROLLER - cities/ endpoint.`);
-  const newCity = await CityService.createCity(req.body);
+
+async function createCity(req: Request, res: Response): Promise<void> {
+  logger.debug('POST /cities - createCity');
   try {
-    if (newCity === undefined) {
-      res.status(404).json({ error: 'City was not created' });
-      return;
+    const newCity = await CityService.createCity(req.body);
+    if (!newCity) {
+      res.status(400).json({ error: 'City was not created' });
     } else {
       res.status(201).json(newCity);
     }
   } catch (err) {
-    logger.error(err);
-    res.status(500).json(err);
+    logger.error('Error in createCity:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
-async function updateCityById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering UPDATE CONTROLLER - cities/ endpoint.`);
-  const id = req.params.id;
-  const updatedCity = await CityService.updateCityById(id, req.body);
+
+async function updateCityById(req: Request, res: Response): Promise<void> {
+  logger.debug(`PATCH /cities/${req.params.id} - updateCityById`);
   try {
+    const updatedCity = await CityService.updateCityById(req.params.id, req.body);
     if (!updatedCity) {
       res.status(404).json({ error: 'No city found' });
-      return;
     } else {
       res.json(updatedCity);
     }
   } catch (err) {
-    logger.error(err);
-    res.status(500).json(err);
+    logger.error('Error in updateCityById:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
-async function deleteCityById(req: express.Request, res: express.Response): Promise<void> {
-  logger.debug(`Entering DELETE CONTROLLER - cities/ endpoint.`);
+
+async function deleteCityById(req: Request, res: Response): Promise<void> {
+  logger.debug(`DELETE /cities/${req.params.id} - deleteCityById`);
   try {
-    const id = req.params.id;
-    const deletedCity = await CityService.deleteCityById(id);
-    if (deletedCity.length === 0) {
+    const deletedCity = await CityService.deleteCityById(req.params.id);
+    if (!deletedCity || deletedCity.length === 0) {
       res.status(404).json({ error: 'No city found' });
-      return;
     } else {
-      logger.info('City Deleted:', deletedCity);
+      logger.info('City deleted:', deletedCity);
       res.json({ alert: 'City Deleted', deletedCity });
     }
   } catch (err) {
-    logger.error(err);
-    res.status(500).json(err);
+    logger.error('Error in deleteCityById:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }

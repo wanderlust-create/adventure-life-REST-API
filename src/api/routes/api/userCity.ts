@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Router } from 'express';
 import UserCityController from '../../controllers/userCity';
 
 // Error Handler
@@ -16,69 +16,52 @@ export default (app: Router) => {
    *     UserCity:
    *       type: object
    *       required:
-   *         - id
-   *         - user_id
-   *         - city_id
+   *         - userId
+   *         - cityId
    *       properties:
    *         id:
    *           type: number
-   *           description: The auto-generated id of the user
-   *         user_id:
-   *           type: string
-   *           description: User id to add the city to
-   *         city_id:
+   *           description: Auto-generated ID of the userCity
+   *         userId:
    *           type: number
-   *           description: City id to add to the user
+   *           description: ID of the user
+   *         cityId:
+   *           type: number
+   *           description: ID of the city
    *       example:
    *         id: 4
-   *         city_id: 2
-   *         user_id: 3
+   *         userId: 3
+   *         cityId: 2
    *     UserCityArray:
    *       type: array
    *       items:
-   *         type: object
-   *         properties:
-   *         id:
-   *           type: number
-   *           description: The auto-generated id of the city
-   *         user_id:
-   *           type: number
-   *           description: The user id
-   *         city_id:
-   *           type: number
-   *           description: The city id
-   *         example:
-   *           id: 78
-   *           user_id: 10
-   *           city_id: 2
+   *         $ref: '#/components/schemas/UserCity'
    */
 
   /**
    * @swagger
    * tags:
    *   name: User-Cities
-   *   description: Adventure Life User Cities
+   *   description: User travel destinations
    */
 
   /**
    * @swagger
    * /api/v1/user-cities:
    *   get:
-   *     summary: Returns an array of all the UserCities
+   *     summary: List all user-city associations
    *     tags: [User-Cities]
    *     responses:
    *       200:
-   *         description: The user-cities were successfully retrieved
+   *         description: A list of user-cities
    *         content:
    *           application/json:
    *             schema:
-   *                 type: array
-   *                 items:
-   *                  $ref: '#/components/schemas/UserCityArray'
+   *               $ref: '#/components/schemas/UserCityArray'
    *       404:
-   *         description: The user-city was not found
+   *         description: No user-city entries found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.get('/', UserCityController.listAllUserCities);
 
@@ -86,7 +69,7 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/user-cities:
    *   post:
-   *     summary: Add a city to a user
+   *     summary: Associate a user with a city
    *     tags: [User-Cities]
    *     requestBody:
    *       required: true
@@ -98,16 +81,18 @@ export default (app: Router) => {
    *             userId: 3
    *             cityId: 4
    *     responses:
-   *       200:
-   *         description: The city was successfully added to the user
+   *       201:
+   *         description: The user-city was created
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/UserCity'
+   *       400:
+   *         description: Validation error
    *       404:
-   *         description: The user and/or city was not found
+   *         description: User or city not found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.post('/', validateDto(userCityDto), UserCityController.createUserCity);
 
@@ -115,22 +100,22 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/user-cities/{id}:
    *   delete:
-   *     summary: Delete userCity using userCity_id
+   *     summary: Remove a user-city association
    *     tags: [User-Cities]
    *     parameters:
    *       - in: path
    *         name: id
+   *         required: true
    *         schema:
    *           type: number
-   *         required: true
-   *         description: The userCity_id
+   *         description: ID of the userCity record
    *     responses:
    *       200:
-   *         description: The user-city was deleted
+   *         description: The user-city entry was deleted
    *       404:
    *         description: The user-city was not found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.delete('/:id', UserCityController.deleteUserCityById);
 };

@@ -1,11 +1,10 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Router } from 'express';
 import EventController from '../../controllers/event';
-
-// Error Handlers
 import validateDto from '../../reqBodyValidation/middlewear/validate-dto';
 import eventDto from '../../reqBodyValidation/dtos/event';
 
 const route = Router();
+
 export default (app: Router) => {
   app.use('/events', route);
 
@@ -16,41 +15,27 @@ export default (app: Router) => {
    *     Event:
    *       type: object
    *       required:
-   *         - id
-   *         - city_id
    *         - title
+   *         - cityId
    *       properties:
    *         id:
    *           type: number
-   *           description: The auto-generated id of the event
-   *         city_id:
-   *           type: number
-   *           description: The foreign key for the city
+   *           description: Auto-generated ID of the event
    *         title:
    *           type: string
-   *           description: The event title
+   *           description: Event title
+   *         cityId:
+   *           type: number
+   *           description: Foreign key referencing the city
    *       example:
    *         id: 19
-   *         city_id: 5
    *         title: Basilica de Santa Maria de Guadalupe
+   *         cityId: 5
+   *
    *     EventArray:
    *       type: array
    *       items:
-   *         type: object
-   *         properties:
-   *         id:
-   *           type: number
-   *           description: The auto-generated id of the event
-   *         city_id:
-   *           type: number
-   *           description: The id of the city the event belongs to
-   *         title:
-   *           type: string
-   *           description: The event title
-   *         example:
-   *           id: 19
-   *           city_id: 5
-   *           title: Basilica de Santa Maria de Guadalupe
+   *         $ref: '#/components/schemas/Event'
    */
 
   /**
@@ -64,30 +49,30 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/events:
    *   get:
-   *     summary: Returns an array of all the events. Can be filtered using a user_id or city_id in parameters
+   *     summary: Get all events (optionally filter by userId or cityId)
    *     tags: [Events]
    *     parameters:
    *       - in: query
-   *         name: city_id
+   *         name: cityId
    *         schema:
    *           type: number
-   *         description: Choose only one option- city or user filter. When included events will be filtered by the city_id.
+   *         description: Filter events by city ID
    *       - in: query
-   *         name: user_id
+   *         name: userId
    *         schema:
    *           type: number
-   *         description: Choose only one option- city or user filter. When included events will be filtered by the user_id
+   *         description: Filter events by user ID
    *     responses:
    *       200:
-   *         description: The events were successfully retrieved
+   *         description: Events retrieved successfully
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/EventArray'
    *       404:
-   *         description: Events were not found
+   *         description: No events found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.get('/', EventController.listEvents);
 
@@ -95,26 +80,26 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/events/{id}:
    *   get:
-   *     summary: Get event attributes with event_id
+   *     summary: Get a single event by ID
    *     tags: [Events]
    *     parameters:
    *       - in: path
    *         name: id
+   *         required: true
    *         schema:
    *           type: number
-   *         required: true
-   *         description: The event id
+   *         description: Event ID
    *     responses:
    *       200:
-   *         description: The event attributes
+   *         description: Event retrieved
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Event'
    *       404:
-   *         description: The event was not found
+   *         description: Event not found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.get('/:id', EventController.getEventById);
 
@@ -134,51 +119,51 @@ export default (app: Router) => {
    *             title: The Amber Museum
    *             cityId: 3
    *     responses:
-   *       200:
-   *         description: The event was successfully created
+   *       201:
+   *         description: Event created successfully
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Event'
-   *       404:
-   *         description: The event was not found
+   *       400:
+   *         description: Validation error
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.post('/', validateDto(eventDto), EventController.createEvent);
 
   /**
    * @swagger
    * /api/v1/events/{id}:
-   *  patch:
-   *    summary: Update event using event_id
-   *    tags: [Events]
-   *    parameters:
-   *      - in: path
-   *        name: id
-   *        schema:
-   *          type: number
-   *        required: true
-   *        description: The event id
-   *    requestBody:
-   *      required: true
-   *      content:
-   *        application/json:
-   *          schema:
-   *            $ref: '#/components/schemas/Event'
-   *          example:
-   *            title: The Jade Museum
-   *    responses:
-   *      200:
-   *        description: The event was updated
-   *        content:
-   *          application/json:
-   *            schema:
-   *              $ref: '#/components/schemas/Event'
-   *      404:
-   *        description: The event was not found
-   *      500:
-   *        description: An error occurred
+   *   patch:
+   *     summary: Update an event by ID
+   *     tags: [Events]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *         description: Event ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/Event'
+   *           example:
+   *             title: The Jade Museum
+   *     responses:
+   *       200:
+   *         description: Event updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Event'
+   *       404:
+   *         description: Event not found
+   *       500:
+   *         description: Server error
    */
   route.patch('/:id', EventController.updateEventById);
 
@@ -186,22 +171,22 @@ export default (app: Router) => {
    * @swagger
    * /api/v1/events/{id}:
    *   delete:
-   *     summary: Delete event using event_id
+   *     summary: Delete an event by ID
    *     tags: [Events]
    *     parameters:
    *       - in: path
    *         name: id
+   *         required: true
    *         schema:
    *           type: number
-   *         required: true
-   *         description: The event id
+   *         description: Event ID
    *     responses:
    *       200:
-   *         description: The event was deleted
+   *         description: Event deleted successfully
    *       404:
-   *         description: The event was not found
+   *         description: Event not found
    *       500:
-   *         description: An error occurred
+   *         description: Server error
    */
   route.delete('/:id', EventController.deleteEventById);
 };

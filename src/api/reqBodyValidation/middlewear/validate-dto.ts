@@ -1,21 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
-import * as yup from 'yup';
-// Load Logger
+import { AnySchema, ValidationError } from 'yup'; // 👈 add this
 import logger from '../../../loaders/logger';
-
-// Error handling function
 import ApiError from '../error/apiError';
 
-export default function validateDto(schema) {
+export default function validateDto(schema: AnySchema) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const validatedBodyData = await schema.validate(req.body);
-      // replace req.body with verified values
+      const validatedBodyData = await schema.validate(req.body, { abortEarly: false });
       req.body = validatedBodyData;
-      logger.debug(`AFTER VALIDATION :req body is: ${req.body}`);
+      logger.debug('✅ Validation successful');
       next();
     } catch (err) {
-      next(ApiError.badRequest(err));
+      if (err instanceof ValidationError) {
+        logger.warn('❌ Validation failed:', err.errors);
+        next(ApiError.badRequest({ message: 'Validation failed', errors: err.errors }));
+      } else {
+        next(err);
+      }
     }
   };
 }
