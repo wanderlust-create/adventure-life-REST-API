@@ -1,4 +1,6 @@
-![adventure-life-logo](https://user-images.githubusercontent.com/67713820/217662321-e2c81fdc-3b12-4522-aaab-9063a7fd75de.png)
+<p align="center">
+  <img src="./assets/adventure-life-banner.png" alt="AdventureLife Banner" width=1000"/>
+</p>
 
 <p align="center">
   <h1>Adventure Life REST API</h1>
