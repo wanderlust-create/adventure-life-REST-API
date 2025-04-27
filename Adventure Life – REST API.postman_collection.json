@@ -1,0 +1,3607 @@
+{
+	"info": {
+		"_postman_id": "d984526f-c7d5-4beb-89b1-92c49509ed9e",
+		"name": "Adventure Life – REST API",
+		"description": "### **🌍 Adventure Life REST API**\n\nThe Adventure Life REST API provides backend functionality for a travel exploration platform. This Postman collection includes requests for:\n\n#### 🧭 Cities\n\n- List all cities\n    \n- Retrieve, create, update, and delete a city\n    \n\n#### 🎉 Events\n\n- List all events\n    \n- Retrieve, create, update, and delete an event\n    \n- Filter events by `cityId` or `userId`\n    \n\n#### 👤 Users\n\n- List all users\n    \n- Retrieve, create, update, and delete a user\n    \n\n#### 🌆 UserCity (join table)\n\n- View user-city associations\n    \n- Create or delete a user’s relationship with a city\n    \n\n---\n\nBuilt with **Node.js**, **TypeScript**, **Express**, **Objection.js**, and **PostgreSQL**. This collection mirrors the functionality documented in the Swagger UI (`/api-docs`).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20045145"
+	},
+	"item": [
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Fetch All Events",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response should be an array\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an(\"array\");",
+									"});",
+									"pm.test(\"Each event should have id, title, and city\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    jsonData.forEach(event => {",
+									"        pm.expect(event).to.have.property(\"id\");",
+									"        pm.expect(event).to.have.property(\"title\");",
+									"        pm.expect(event).to.have.property(\"city\");",
+									"        pm.expect(event.city).to.have.property(\"id\");",
+									"        pm.expect(event.city).to.have.property(\"name\");",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events"
+							]
+						},
+						"description": "Returns a list of all events in the database.\nSupports optional query parameters such as `cityId` and `userId` for filtering."
+					},
+					"response": [
+						{
+							"name": "Fetch All Events",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2293"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"8f5-SRtTqHk8kbBygn0OqyzVQoFBDik\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:40:19 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"title\": \"SUMMIT One Vanderbilt Experience\",\n        \"city\": {\n            \"id\": 1,\n            \"name\": \"New York\"\n        }\n    },\n    {\n        \"id\": 2,\n        \"title\": \"Moonlight Horse Carriage Ride through Central Park\",\n        \"city\": {\n            \"id\": 1,\n            \"name\": \"New York\"\n        }\n    },\n    {\n        \"id\": 3,\n        \"title\": \"New York City Statue of Liberty Super Express Cruise\",\n        \"city\": {\n            \"id\": 1,\n            \"name\": \"New York\"\n        }\n    },\n    {\n        \"id\": 4,\n        \"title\": \"Complete Manhattan Island Cruise\",\n        \"city\": {\n            \"id\": 1,\n            \"name\": \"New York\"\n        }\n    },\n    {\n        \"id\": 5,\n        \"title\": \"The Big Apple Helicopter Tour\",\n        \"city\": {\n            \"id\": 1,\n            \"name\": \"New York\"\n        }\n    },\n    {\n        \"id\": 6,\n        \"title\": \"Qutub Minar\",\n        \"city\": {\n            \"id\": 2,\n            \"name\": \"Delhi\"\n        }\n    },\n    {\n        \"id\": 7,\n        \"title\": \"Lotus Temple\",\n        \"city\": {\n            \"id\": 2,\n            \"name\": \"Delhi\"\n        }\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Fetch Single Event by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"pm.test(\"Event is a valid object\", () => {",
+									"    pm.expect(data).to.be.an(\"object\");",
+									"    pm.expect(data).to.have.property(\"id\");",
+									"    pm.expect(data).to.have.property(\"title\");",
+									"    pm.expect(data).to.have.property(\"city\");",
+									"    pm.expect(data.city).to.have.property(\"id\");",
+									"    pm.expect(data.city).to.have.property(\"name\");",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events/{{eventId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								"{{eventId}}"
+							]
+						},
+						"description": "Retrieves a single event by its unique ID.\nReturns full event details including `title`, `cityId`, and timestamps."
+					},
+					"response": [
+						{
+							"name": "Fetch Single Event by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events/{{eventId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										"{{eventId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "85"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"55-kqnHJqsVOhWr9Rnuf1aOSl58dSM\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:41:34 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"SUMMIT One Vanderbilt Experience\",\n    \"city\": {\n        \"id\": 1,\n        \"name\": \"New York\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle Event Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"    pm.response.to.have.status(404);",
+									"})",
+									"pm.test(\"Returns not found error message\", () => {",
+									"    pm.expect(data).to.be.an(\"object\");",
+									"    pm.expect(data).to.have.property(\"error\");",
+									"    pm.expect(data.error.toLowerCase()).to.include(\"no event found\");",
+									"  });",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								"9999"
+							]
+						},
+						"description": "Retrieves a single event by its unique ID.\nReturns full event details including `title`, `cityId`, and timestamps."
+					},
+					"response": [
+						{
+							"name": "Handle Event Not Found (404)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1a-MPX+8UoeIoCjhPs4wVzycCaaiPs\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:41:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No event found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create New Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const data = pm.response.json();",
+									"pm.collectionVariables.set(\"newEventId\", data.id);",
+									"",
+									"pm.test(\"Status code is 201\", () => {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Created event is a valid object\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"title\");",
+									"  pm.expect(data).to.have.property(\"cityId\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cityId\" : 5,\n    \"title\": \"Amber Museum\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/events",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events"
+							]
+						},
+						"description": "Creates a new event.\nRequired fields:\n- `cityId` (integer) – ID of the city\n- `title` (string) – Title of the event"
+					},
+					"response": [
+						{
+							"name": "Create New Event",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cityId\" : 5,\n    \"title\": \"Amber Museum\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/events",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2d-5gt1VlnvNghUPmtHXYaiV9l5ulY\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:41:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"cityId\": \"5\",\n    \"title\": \"Amber Museum\",\n    \"id\": 30\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Event Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.expect(status).to.eql(200);",
+									"});",
+									"pm.test(\"Updated event is a valid object\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"title\");",
+									"  pm.expect(data).to.have.property(\"cityId\");",
+									"  pm.expect(data).to.have.property(\"createdAt\");",
+									"  pm.expect(data).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\" : \"Updated Event Title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/events/{{newEventId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								"{{newEventId}}"
+							]
+						},
+						"description": "Updates an existing event’s data by ID.\nSend only the fields you wish to update. Example: `title`, `cityId`."
+					},
+					"response": [
+						{
+							"name": "Update Event Details",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\" : \"Updated Event Title\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/events/{{newEventId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										"{{newEventId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "128"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"80-rAOzMfQiYxN3z6jeSI3PpU17R1g\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:42:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 30,\n    \"cityId\": 5,\n    \"title\": \"Updated Event Title\",\n    \"createdAt\": \"2025-04-27T01:41:56.982Z\",\n    \"updatedAt\": \"2025-04-27T01:41:56.982Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle Event Update Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No event found\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\" : \"The BLUE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/events/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								"9999"
+							]
+						},
+						"description": "Updates an existing event’s data by ID.\nSend only the fields you wish to update. Example: `title`, `cityId`."
+					},
+					"response": [
+						{
+							"name": "Handle Event Update Not Found (404)",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\" : \"The BLUE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/events/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1a-MPX+8UoeIoCjhPs4wVzycCaaiPs\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:42:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No event found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Event by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.expect(status).to.eql(200);",
+									"});",
+									"pm.test(\"Response contains confirmation alert\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"alert\", \"Event Deleted\");",
+									"});",
+									"pm.test(\"Deleted event data is correct\", () => {",
+									"  pm.expect(data).to.have.property(\"deletedEvent\");",
+									"  pm.expect(data.deletedEvent).to.be.an(\"array\").that.has.lengthOf(1);",
+									"  const deleted = data.deletedEvent[0];",
+									"  pm.expect(deleted).to.have.property(\"id\");",
+									"  pm.expect(deleted).to.have.property(\"title\");",
+									"  pm.expect(deleted).to.have.property(\"cityId\");",
+									"  pm.expect(deleted).to.have.property(\"createdAt\");",
+									"  pm.expect(deleted).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/events/{{newEventId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								"{{newEventId}}"
+							]
+						},
+						"description": "Deletes the specified event by ID.\nThis action is irreversible."
+					},
+					"response": [
+						{
+							"name": "Delete Event by ID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/events/{{newEventId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										"{{newEventId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "171"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ab-wx+njmkHNbnHIO5WUsatjQ8MHhU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:42:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"alert\": \"Event Deleted\",\n    \"deletedEvent\": [\n        {\n            \"id\": 30,\n            \"cityId\": 5,\n            \"title\": \"Updated Event Title\",\n            \"createdAt\": \"2025-04-27T01:41:56.982Z\",\n            \"updatedAt\": \"2025-04-27T01:41:56.982Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle Event Deletion Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No event found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/events/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								"9999"
+							]
+						},
+						"description": "Deletes the specified event by ID.\nThis action is irreversible."
+					},
+					"response": [
+						{
+							"name": "Handle Event Deletion Not Found (404)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/events/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1a-MPX+8UoeIoCjhPs4wVzycCaaiPs\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:43:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No event found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Events by City",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.expect(status).to.eql(200);",
+									"});",
+									"pm.test(\"Response is an array of events\", () => {",
+									"  pm.expect(data).to.be.an(\"array\");",
+									"  pm.expect(data.length).to.be.above(0);",
+									"});",
+									"pm.test(\"Each event has expected properties and correct cityId\", () => {",
+									"  data.forEach((event) => {",
+									"    pm.expect(event).to.have.property(\"id\");",
+									"    pm.expect(event).to.have.property(\"title\");",
+									"    pm.expect(event).to.have.property(\"cityId\", 1);",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events/?cityId={{cityId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								""
+							],
+							"query": [
+								{
+									"key": "cityId",
+									"value": "{{cityId}}"
+								}
+							]
+						},
+						"description": "Returns a list of events filtered by the `cityId` query parameter."
+					},
+					"response": [
+						{
+							"name": "Fetch Events by City",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events/?cityId={{cityId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										""
+									],
+									"query": [
+										{
+											"key": "cityId",
+											"value": "{{cityId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "351"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"15f-XeaX8kzl5GqFaKasTTaZ6aV/KCE\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:43:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"title\": \"SUMMIT One Vanderbilt Experience\",\n        \"cityId\": 1\n    },\n    {\n        \"id\": 2,\n        \"title\": \"Moonlight Horse Carriage Ride through Central Park\",\n        \"cityId\": 1\n    },\n    {\n        \"id\": 3,\n        \"title\": \"New York City Statue of Liberty Super Express Cruise\",\n        \"cityId\": 1\n    },\n    {\n        \"id\": 4,\n        \"title\": \"Complete Manhattan Island Cruise\",\n        \"cityId\": 1\n    },\n    {\n        \"id\": 5,\n        \"title\": \"The Big Apple Helicopter Tour\",\n        \"cityId\": 1\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Handle Invalid City Filter (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns an appropriate error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error.toLowerCase()).to.include(\"not found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events/?cityId=9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								""
+							],
+							"query": [
+								{
+									"key": "cityId",
+									"value": "9999"
+								}
+							]
+						},
+						"description": "Returns a list of events filtered by the `cityId` query parameter."
+					},
+					"response": [
+						{
+							"name": "Handle Invalid City Filter (404)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events/?cityId=9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										""
+									],
+									"query": [
+										{
+											"key": "cityId",
+											"value": "9999"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"28-O6y+apShiZzSdGtRadsvLCoqquU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:43:20 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"City with id 9999 not found.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Events by User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.expect(status).to.eql(200);",
+									"});",
+									"pm.test(\"Response is a user object with expected properties\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\", 1);",
+									"  pm.expect(data).to.have.property(\"firstName\");",
+									"  pm.expect(data).to.have.property(\"lastName\");",
+									"  pm.expect(data).to.have.property(\"city\");",
+									"});",
+									"pm.test(\"User has an array of cities, each with events\", () => {",
+									"  pm.expect(data.city).to.be.an(\"array\");",
+									"  data.city.forEach((city) => {",
+									"    pm.expect(city).to.have.property(\"name\");",
+									"    pm.expect(city).to.have.property(\"event\");",
+									"    pm.expect(city.event).to.be.an(\"array\");",
+									"    city.event.forEach((event) => {",
+									"      pm.expect(event).to.have.property(\"id\");",
+									"      pm.expect(event).to.have.property(\"title\");",
+									"    });",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events/?userId={{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						},
+						"description": "Returns a list of events associated with a specific user, using the `userId` query parameter."
+					},
+					"response": [
+						{
+							"name": "Fetch Events by User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events/?userId={{userId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										""
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1052"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"41c-IYudZGn2ATlbqkMeRyuhjyjHrDM\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:53:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"firstName\": \"Sinead\",\n    \"lastName\": \"Seto\",\n    \"city\": [\n        {\n            \"name\": \"New York\",\n            \"event\": [\n                {\n                    \"id\": 1,\n                    \"title\": \"SUMMIT One Vanderbilt Experience\"\n                },\n                {\n                    \"id\": 2,\n                    \"title\": \"Moonlight Horse Carriage Ride through Central Park\"\n                },\n                {\n                    \"id\": 3,\n                    \"title\": \"New York City Statue of Liberty Super Express Cruise\"\n                },\n                {\n                    \"id\": 4,\n                    \"title\": \"Complete Manhattan Island Cruise\"\n                },\n                {\n                    \"id\": 5,\n                    \"title\": \"The Big Apple Helicopter Tour\"\n                }\n            ]\n        },\n        {\n            \"name\": \"Delhi\",\n            \"event\": [\n                {\n                    \"id\": 6,\n                    \"title\": \"Qutub Minar\"\n                },\n                {\n                    \"id\": 7,\n                    \"title\": \"Lotus Temple\"\n                },\n                {\n                    \"id\": 8,\n                    \"title\": \"Hauz Khas Village\"\n                },\n                {\n                    \"id\": 9,\n                    \"title\": \"India Gate\"\n                }\n            ]\n        },\n        {\n            \"name\": \"San Francisco\",\n            \"event\": [\n                {\n                    \"id\": 10,\n                    \"title\": \"Alcatraz with San Francisco Bay Cruise\"\n                },\n                {\n                    \"id\": 11,\n                    \"title\": \"Napa and Sonoma Wine Country Full-Day Tour\"\n                },\n                {\n                    \"id\": 12,\n                    \"title\": \"Big Bus San Francisco Hop-on Hop-off Open Top Tour\"\n                },\n                {\n                    \"id\": 13,\n                    \"title\": \"Painted Ladies San Francisco City Tour\"\n                }\n            ]\n        },\n        {\n            \"name\": \"Amsterdam\",\n            \"event\": [\n                {\n                    \"id\": 24,\n                    \"title\": \"Van Gogh Museum\"\n                },\n                {\n                    \"id\": 25,\n                    \"title\": \"Rijksmuseum\"\n                },\n                {\n                    \"id\": 26,\n                    \"title\": \"The Jordaan Walking Tour\"\n                },\n                {\n                    \"id\": 27,\n                    \"title\": \"ARTIS Amsterdam Royal Zoo\"\n                },\n                {\n                    \"id\": 28,\n                    \"title\": \"Anne Frank House\"\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle Invalid User Filter (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns an appropriate error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error.toLowerCase()).to.include(\"not found\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events/?userId=9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"events",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "9999"
+								}
+							]
+						},
+						"description": "Returns a list of events associated with a specific user, using the `userId` query parameter."
+					},
+					"response": [
+						{
+							"name": "Handle Invalid User Filter (404)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/events/?userId=9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"events",
+										""
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "9999"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"28-tZu/xxRixfpH/rqzUrGvwT22Mco\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:43:32 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"User with id 9999 not found.\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Cities",
+			"item": [
+				{
+					"name": "Fetch All Cities",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Cities list is an array with expected structure\", () => {",
+									"  pm.expect(data).to.be.an(\"array\");",
+									"  data.forEach((city) => {",
+									"    pm.expect(city).to.have.property(\"id\");",
+									"    pm.expect(city).to.have.property(\"name\");",
+									"    pm.expect(city).to.have.property(\"country\");",
+									"    pm.expect(city).to.have.property(\"event\").that.is.an(\"array\");",
+									"    city.event.forEach((event) => {",
+									"      pm.expect(event).to.have.property(\"id\");",
+									"      pm.expect(event).to.have.property(\"title\");",
+									"    });",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities"
+							]
+						},
+						"description": "Retrieves all cities available in the system."
+					},
+					"response": [
+						{
+							"name": "Fetch All Cities",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1671"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"687-BsvQExvCKEp+NsMf92SVG2kw+DA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:54:20 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"New York\",\n        \"country\": \"USA\",\n        \"event\": [\n            {\n                \"id\": 1,\n                \"title\": \"SUMMIT One Vanderbilt Experience\"\n            },\n            {\n                \"id\": 2,\n                \"title\": \"Moonlight Horse Carriage Ride through Central Park\"\n            },\n            {\n                \"id\": 3,\n                \"title\": \"New York City Statue of Liberty Super Express Cruise\"\n            },\n            {\n                \"id\": 4,\n                \"title\": \"Complete Manhattan Island Cruise\"\n            },\n            {\n                \"id\": 5,\n                \"title\": \"The Big Apple Helicopter Tour\"\n            }\n        ]\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Delhi\",\n        \"country\": \"India\",\n        \"event\": [\n            {\n                \"id\": 6,\n                \"title\": \"Qutub Minar\"\n            },\n            {\n                \"id\": 7,\n                \"title\": \"Lotus Temple\"\n            },\n            {\n                \"id\": 8,\n                \"title\": \"Hauz Khas Village\"\n            },\n            {\n                \"id\": 9,\n                \"title\": \"India Gate\"\n            }\n        ]\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Fetch Single City by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"City object has expected properties\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"name\");",
+									"  pm.expect(data).to.have.property(\"country\");",
+									"  pm.expect(data).to.have.property(\"event\").that.is.an(\"array\");",
+									"  data.event.forEach((event) => {",
+									"    pm.expect(event).to.have.property(\"id\");",
+									"    pm.expect(event).to.have.property(\"title\");",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cities/{{cityId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities",
+								"{{cityId}}"
+							]
+						},
+						"description": "Fetches city details by ID.\nReturns name, country, and related data."
+					},
+					"response": [
+						{
+							"name": "Fetch Single City by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cities/{{cityId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities",
+										"{{cityId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "347"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"15b-P4roYneyyNklqwx9CwcUjzeTgdo\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:54:30 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"name\": \"New York\",\n    \"country\": \"USA\",\n    \"event\": [\n        {\n            \"id\": 1,\n            \"title\": \"SUMMIT One Vanderbilt Experience\"\n        },\n        {\n            \"id\": 2,\n            \"title\": \"Moonlight Horse Carriage Ride through Central Park\"\n        },\n        {\n            \"id\": 3,\n            \"title\": \"New York City Statue of Liberty Super Express Cruise\"\n        },\n        {\n            \"id\": 4,\n            \"title\": \"Complete Manhattan Island Cruise\"\n        },\n        {\n            \"id\": 5,\n            \"title\": \"The Big Apple Helicopter Tour\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle City Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No city found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cities/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities",
+								"9999"
+							]
+						},
+						"description": "Fetches city details by ID.\nReturns name, country, and related data."
+					},
+					"response": [
+						{
+							"name": "Handle City Not Found (404)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cities/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"19-wqGUikKuGDd6vQSSFBnydeI4WOA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:54:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No city found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create New City",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const data = pm.response.json();",
+									"pm.collectionVariables.set(\"newCityId\", data.id);",
+									"",
+									"pm.test(\"Status code is 201\", () => {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Created city object has expected properties\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"name\");",
+									"  pm.expect(data).to.have.property(\"country\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Los Angeles\",\n    \"country\": \"USA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/cities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities"
+							]
+						},
+						"description": "Creates a new city.\nRequired fields:\n- `name` (string)\n- `country` (string)"
+					},
+					"response": [
+						{
+							"name": "Create New City",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Los Angeles\",\n    \"country\": \"USA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2d-WhRVvSzyoiA+0P1agP30L7kxN9k\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:54:53 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"name\": \"Los Angeles\",\n    \"country\": \"USA\",\n    \"id\": 8\n}"
+						}
+					]
+				},
+				{
+					"name": "Update City Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Updated city object has expected properties\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"name\");",
+									"  pm.expect(data).to.have.property(\"country\");",
+									"  pm.expect(data).to.have.property(\"createdAt\");",
+									"  pm.expect(data).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"LA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/cities/{{newCityId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities",
+								"{{newCityId}}"
+							]
+						},
+						"description": "Updates an existing city by ID.\nPartial updates supported (e.g., `name` only)."
+					},
+					"response": [
+						{
+							"name": "Update City Details",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"LA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cities/{{newCityId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities",
+										"{{newCityId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "114"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"72-tD2VvI8W3y7T2NswfWyFhRZJGVc\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:55:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 8,\n    \"name\": \"LA\",\n    \"country\": \"USA\",\n    \"createdAt\": \"2025-04-27T01:54:53.166Z\",\n    \"updatedAt\": \"2025-04-27T01:54:53.166Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle City Update Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No city found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"LA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/cities/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities",
+								"9999"
+							]
+						},
+						"description": "Updates an existing city by ID.\nPartial updates supported (e.g., `name` only)."
+					},
+					"response": [
+						{
+							"name": "Handle City Update Not Found (404)",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"LA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cities/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"19-wqGUikKuGDd6vQSSFBnydeI4WOA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:55:21 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No city found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete City by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response has deletion alert and deletedCity details\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"alert\", \"City Deleted\");",
+									"  pm.expect(data).to.have.property(\"deletedCity\").that.is.an(\"array\").with.lengthOf(1);",
+									"  const city = data.deletedCity[0];",
+									"  pm.expect(city).to.have.property(\"id\");",
+									"  pm.expect(city).to.have.property(\"name\");",
+									"  pm.expect(city).to.have.property(\"country\");",
+									"  pm.expect(city).to.have.property(\"createdAt\");",
+									"  pm.expect(city).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cities/{{newCityId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities",
+								"{{newCityId}}"
+							]
+						},
+						"description": "Deletes the specified city.\nEnsure it is not referenced by any events before deletion."
+					},
+					"response": [
+						{
+							"name": "Delete City by ID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cities/{{newCityId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities",
+										"{{newCityId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "155"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9b-q5GCH8nNsh3WnMFKkYrSw/rLjLE\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:55:30 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"alert\": \"City Deleted\",\n    \"deletedCity\": [\n        {\n            \"id\": 8,\n            \"name\": \"LA\",\n            \"country\": \"USA\",\n            \"createdAt\": \"2025-04-27T01:54:53.166Z\",\n            \"updatedAt\": \"2025-04-27T01:54:53.166Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle City Deletion Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No city found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cities/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cities",
+								"9999"
+							]
+						},
+						"description": "Deletes the specified city.\nEnsure it is not referenced by any events before deletion."
+					},
+					"response": [
+						{
+							"name": "Handle City Deletion Not Found (404)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cities/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cities",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"19-wqGUikKuGDd6vQSSFBnydeI4WOA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:55:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No city found\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Fetch All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response is an array of users\", () => {",
+									"  pm.expect(data).to.be.an(\"array\");",
+									"  pm.expect(data.length).to.be.above(0);",
+									"});",
+									"pm.test(\"Each user has expected properties\", () => {",
+									"  data.forEach((user) => {",
+									"    pm.expect(user).to.have.property(\"id\");",
+									"    pm.expect(user).to.have.property(\"firstName\");",
+									"    pm.expect(user).to.have.property(\"lastName\");",
+									"    pm.expect(user).to.have.property(\"email\");",
+									"    pm.expect(user).to.have.property(\"city\");",
+									"    pm.expect(user.city).to.be.an(\"array\");",
+									"    user.city.forEach((c) => {",
+									"      pm.expect(c).to.have.property(\"name\");",
+									"    });",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Retrieves all registered users in the system."
+					},
+					"response": [
+						{
+							"name": "Fetch All Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "964"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3c4-7569cr49ka20+8pau2/GZlDHLqQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:55:47 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"firstName\": \"Sinead\",\n        \"lastName\": \"Seto\",\n        \"email\": \"Sinead@email.com\",\n        \"city\": [\n            {\n                \"name\": \"Amsterdam\"\n            },\n            {\n                \"name\": \"San Francisco\"\n            },\n            {\n                \"name\": \"New York\"\n            },\n            {\n                \"name\": \"Delhi\"\n            }\n        ]\n    },\n    {\n        \"id\": 2,\n        \"firstName\": \"Ruolan\",\n        \"lastName\": \"Ablog\",\n        \"email\": \"Ruolan@email.com\",\n        \"city\": [\n            {\n                \"name\": \"Delhi\"\n            },\n            {\n                \"name\": \"New York\"\n            },\n            {\n                \"name\": \"Porto\"\n            },\n            {\n                \"name\": \"Mexico City\"\n            }\n        ]\n    },\n    {\n        \"id\": 3,\n        \"firstName\": \"Stansie\",\n        \"lastName\": \"Narayan\",\n        \"email\": \"Stansie@email.com\",\n        \"city\": [\n            {\n                \"name\": \"Amsterdam\"\n            },\n            {\n                \"name\": \"New York\"\n            },\n            {\n                \"name\": \"Porto\"\n            }\n        ]\n    },\n    {\n        \"id\": 4,\n        \"firstName\": \"Filip\",\n        \"lastName\": \"Chahine\",\n        \"email\": \"Filip@email.com\",\n        \"city\": [\n            {\n                \"name\": \"San Francisco\"\n            },\n            {\n                \"name\": \"Porto\"\n            },\n            {\n                \"name\": \"Amsterdam\"\n            },\n            {\n                \"name\": \"Mexico City\"\n            }\n        ]\n    },\n    {\n        \"id\": 5,\n        \"firstName\": \"Fletcher\",\n        \"lastName\": \"Sandhu\",\n        \"email\": \"Fletcher@email.com\",\n        \"city\": [\n            {\n                \"name\": \"San Francisco\"\n            },\n            {\n                \"name\": \"Delhi\"\n            }\n        ]\n    },\n    {\n        \"id\": 6,\n        \"firstName\": \"Shelby\",\n        \"lastName\": \"Cortez\",\n        \"email\": \"Shelby@email.com\",\n        \"city\": [\n            {\n                \"name\": \"Delhi\"\n            },\n            {\n                \"name\": \"Mexico City\"\n            },\n            {\n                \"name\": \"Porto\"\n            },\n            {\n                \"name\": \"Amsterdam\"\n            },\n            {\n                \"name\": \"New York\"\n            }\n        ]\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Fetch Single User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response is a valid user object\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"firstName\");",
+									"  pm.expect(data).to.have.property(\"lastName\");",
+									"  pm.expect(data).to.have.property(\"email\");",
+									"  pm.expect(data).to.have.property(\"city\");",
+									"  pm.expect(data.city).to.be.an(\"array\");",
+									"});",
+									"pm.test(\"Each city has a name property\", () => {",
+									"  data.city.forEach((c) => {",
+									"    pm.expect(c).to.have.property(\"name\");",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Fetches user details by ID, including name and email."
+					},
+					"response": [
+						{
+							"name": "Fetch Single User by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users/{{userId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "166"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"a6-fBYdrjrCUh3vx8N+drhhzPMbFGw\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:55:57 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"firstName\": \"Sinead\",\n    \"lastName\": \"Seto\",\n    \"email\": \"Sinead@email.com\",\n    \"city\": [\n        {\n            \"name\": \"New York\"\n        },\n        {\n            \"name\": \"Delhi\"\n        },\n        {\n            \"name\": \"San Francisco\"\n        },\n        {\n            \"name\": \"Amsterdam\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle User Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No user found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"9999"
+							]
+						},
+						"description": "Fetches user details by ID, including name and email."
+					},
+					"response": [
+						{
+							"name": "Handle User Not Found (404)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"19-1ToWR8NpPS36gLEfqG0TRuu0LLU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:56:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No user found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const data = pm.response.json();",
+									"pm.collectionVariables.set(\"newUserId\", data.id);",
+									"",
+									"pm.test(\"Status code is 201\", () => {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response is a valid user object\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"firstName\");",
+									"  pm.expect(data).to.have.property(\"lastName\");",
+									"  pm.expect(data).to.have.property(\"email\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"NewUser\",\n  \"email\": \"TestNewUser99@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Creates a new user.\nRequired fields:\n- `firstName` (string)\n- `lastName` (string)\n- `email` (string, unique)"
+					},
+					"response": [
+						{
+							"name": "Create New User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"NewUser\",\n  \"email\": \"TestNewUser99@example.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "84"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"54-w0WnS7ILSLsNRAv0Hmr/p4uw/vY\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:56:15 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"firstName\": \"Test\",\n    \"lastName\": \"NewUser\",\n    \"email\": \"TestNewUser99@example.com\",\n    \"id\": 8\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response contains updated user object\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"firstName\");",
+									"  pm.expect(data).to.have.property(\"lastName\");",
+									"  pm.expect(data).to.have.property(\"email\");",
+									"  pm.expect(data).to.have.property(\"createdAt\");",
+									"  pm.expect(data).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n    \"lastName\": \"UpdatedUserLastName\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{newUserId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{newUserId}}"
+							]
+						},
+						"description": "Updates user details.\nFields can be updated individually. Example: `lastName`."
+					},
+					"response": [
+						{
+							"name": "Update User Details",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n    \"lastName\": \"UpdatedUserLastName\"\n\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/users/{{newUserId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"{{newUserId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "174"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ae-wOofKU6muv+8BE1lZcSe/nW1Zl0\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:56:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 8,\n    \"email\": \"TestNewUser99@example.com\",\n    \"firstName\": \"Test\",\n    \"lastName\": \"UpdatedUserLastName\",\n    \"createdAt\": \"2025-04-27T01:56:15.427Z\",\n    \"updatedAt\": \"2025-04-27T01:56:15.427Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle User Update Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No user found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n    \"lastName\": \"Lemons2\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"9999"
+							]
+						},
+						"description": "Updates user details.\nFields can be updated individually. Example: `lastName`."
+					},
+					"response": [
+						{
+							"name": "Handle User Update Not Found (404)",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n    \"lastName\": \"Lemons2\"\n\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/users/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"19-1ToWR8NpPS36gLEfqG0TRuu0LLU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:56:30 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No user found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response confirms user deletion\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"alert\", \"User Deleted\");",
+									"  pm.expect(data).to.have.property(\"deletedUser\").that.is.an(\"array\").with.lengthOf(1);",
+									"  const user = data.deletedUser[0];",
+									"  pm.expect(user).to.have.property(\"id\");",
+									"  pm.expect(user).to.have.property(\"email\");",
+									"  pm.expect(user).to.have.property(\"firstName\");",
+									"  pm.expect(user).to.have.property(\"lastName\");",
+									"  pm.expect(user).to.have.property(\"createdAt\");",
+									"  pm.expect(user).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{newUserId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{newUserId}}"
+							]
+						},
+						"description": "Deletes a user by ID.\nUse with caution — this may affect linked records."
+					},
+					"response": [
+						{
+							"name": "Delete User by ID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users/{{newUserId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"{{newUserId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "215"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"d7-fPehNU9o2z84ReBDFIfqBwpP20Y\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:56:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"alert\": \"User Deleted\",\n    \"deletedUser\": [\n        {\n            \"id\": 8,\n            \"email\": \"TestNewUser99@example.com\",\n            \"firstName\": \"Test\",\n            \"lastName\": \"UpdatedUserLastName\",\n            \"createdAt\": \"2025-04-27T01:56:15.427Z\",\n            \"updatedAt\": \"2025-04-27T01:56:15.427Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle User Deletion Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"No user found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"9999"
+							]
+						},
+						"description": "Deletes a user by ID.\nUse with caution — this may affect linked records."
+					},
+					"response": [
+						{
+							"name": "Handle User Deletion Not Found (404)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"19-1ToWR8NpPS36gLEfqG0TRuu0LLU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:56:52 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No user found\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "userCity",
+			"item": [
+				{
+					"name": "Fetch All User-City Links",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response is an array of user-city objects\", () => {",
+									"  pm.expect(data).to.be.an(\"array\");",
+									"  data.forEach((uc) => {",
+									"    pm.expect(uc).to.be.an(\"object\");",
+									"    pm.expect(uc).to.have.property(\"id\");",
+									"    pm.expect(uc).to.have.property(\"userId\");",
+									"    pm.expect(uc).to.have.property(\"cityId\");",
+									"  });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-cities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-cities"
+							]
+						},
+						"description": "Returns all user-city associations.\nUsed to determine which users are linked to which cities."
+					},
+					"response": [
+						{
+							"name": "Fetch All User-City Links",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user-cities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user-cities"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "696"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2b8-cJihwSbr04p66m4XPvR8Xu/2Vuc\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:57:04 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"userId\": 1,\n        \"cityId\": 6\n    },\n    {\n        \"id\": 2,\n        \"userId\": 1,\n        \"cityId\": 3\n    },\n    {\n        \"id\": 3,\n        \"userId\": 1,\n        \"cityId\": 1\n    },\n    {\n        \"id\": 4,\n        \"userId\": 1,\n        \"cityId\": 2\n    },\n    {\n        \"id\": 5,\n        \"userId\": 2,\n        \"cityId\": 2\n    },\n    {\n        \"id\": 6,\n        \"userId\": 2,\n        \"cityId\": 1\n    },\n    {\n        \"id\": 7,\n        \"userId\": 2,\n        \"cityId\": 4\n    },\n    {\n        \"id\": 8,\n        \"userId\": 2,\n        \"cityId\": 5\n    },\n    {\n        \"id\": 9,\n        \"userId\": 3,\n        \"cityId\": 6\n    },\n    {\n        \"id\": 10,\n        \"userId\": 3,\n        \"cityId\": 1\n    },\n    {\n        \"id\": 11,\n        \"userId\": 3,\n        \"cityId\": 4\n    },\n    {\n        \"id\": 12,\n        \"userId\": 4,\n        \"cityId\": 3\n    },\n    {\n        \"id\": 13,\n        \"userId\": 4,\n        \"cityId\": 4\n    },\n    {\n        \"id\": 14,\n        \"userId\": 4,\n        \"cityId\": 6\n    },\n    {\n        \"id\": 15,\n        \"userId\": 4,\n        \"cityId\": 5\n    },\n    {\n        \"id\": 16,\n        \"userId\": 5,\n        \"cityId\": 3\n    },\n    {\n        \"id\": 17,\n        \"userId\": 5,\n        \"cityId\": 2\n    },\n    {\n        \"id\": 18,\n        \"userId\": 6,\n        \"cityId\": 2\n    },\n    {\n        \"id\": 19,\n        \"userId\": 6,\n        \"cityId\": 5\n    },\n    {\n        \"id\": 20,\n        \"userId\": 6,\n        \"cityId\": 4\n    },\n    {\n        \"id\": 21,\n        \"userId\": 6,\n        \"cityId\": 6\n    },\n    {\n        \"id\": 22,\n        \"userId\": 6,\n        \"cityId\": 1\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Create New User-City Link",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const data = pm.response.json();",
+									"pm.collectionVariables.set(\"newUserCityId\", data.id);",
+									"",
+									"pm.test(\"Status code is 201\", () => {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response is a valid user-city object\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"  pm.expect(data).to.have.property(\"userId\");",
+									"  pm.expect(data).to.have.property(\"cityId\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\" : 2,\n    \"cityId\" : 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-cities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-cities"
+							]
+						},
+						"description": "Creates a new link between a user and a city.\nRequired fields:\n- `userId` (integer)\n- `cityId` (integer)"
+					},
+					"response": [
+						{
+							"name": "Create New User-City Link",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\" : 2,\n    \"cityId\" : 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user-cities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user-cities"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "35"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"23-8VWlURZapPFQGFWJZK4vcZZHRWw\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:57:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userId\": \"2\",\n    \"cityId\": \"1\",\n    \"id\": 24\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User-City Link by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const data = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Returns deleted user-city object and alert\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"alert\", \"User-City Deleted\");",
+									"  pm.expect(data).to.have.property(\"deletedUserCity\").that.is.an(\"array\").with.length.greaterThan(0);",
+									"  const userCity = data.deletedUserCity[0];",
+									"  pm.expect(userCity).to.have.property(\"id\");",
+									"  pm.expect(userCity).to.have.property(\"userId\");",
+									"  pm.expect(userCity).to.have.property(\"cityId\");",
+									"  pm.expect(userCity).to.have.property(\"createdAt\");",
+									"  pm.expect(userCity).to.have.property(\"updatedAt\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-cities/{{newUserCityId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-cities",
+								"{{newUserCityId}}"
+							]
+						},
+						"description": "Deletes a user-city relationship by ID."
+					},
+					"response": [
+						{
+							"name": "Delete User-City Link by ID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user-cities/{{newUserCityId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user-cities",
+										"{{newUserCityId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "159"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9f-7FPg8kfD3pOGcTwGUXYo/JyqFwE\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:57:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"alert\": \"User-City Deleted\",\n    \"deletedUserCity\": [\n        {\n            \"id\": 24,\n            \"userId\": 2,\n            \"cityId\": 1,\n            \"createdAt\": \"2025-04-27T01:57:24.992Z\",\n            \"updatedAt\": \"2025-04-27T01:57:24.992Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Handle User-City Link Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let data;",
+									"try {",
+									"  data = pm.response.json();",
+									"} catch (e) {",
+									"  console.error(\"Failed to parse response JSON\", e);",
+									"}",
+									"const status = pm.response.code;",
+									"pm.test(\"Status code is 404\", () => {",
+									"  pm.expect(status).to.eql(404);",
+									"});",
+									"pm.test(\"Returns a not found error message\", () => {",
+									"  pm.expect(data).to.be.an(\"object\");",
+									"  pm.expect(data).to.have.property(\"error\");",
+									"  pm.expect(data.error).to.eql(\"User-city not found\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-cities/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-cities",
+								"9999"
+							]
+						},
+						"description": "Deletes a user-city relationship by ID."
+					},
+					"response": [
+						{
+							"name": "Handle User-City Link Not Found (404)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user-cities/9999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user-cities",
+										"9999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1f-Rs0LMERm7Zjt9BRrguXB2lXJYnA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 27 Apr 2025 01:57:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"User-city not found\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"// Ensure base_url is set",
+					"if (!pm.collectionVariables.get(\"base_url\")) {",
+					"  pm.collectionVariables.set(\"base_url\", \"http://localhost:3000/api/v1\");",
+					"}",
+					"",
+					"// Initialize fallback test values if needed",
+					"const defaults = {",
+					"  userId: \"1\",",
+					"  cityId: \"1\",",
+					"  eventId: \"1\",",
+					"  newUserId: \"123\",",
+					"  newEventId: \"123\",",
+					"  newCityId: \"123\",",
+					"  newUserCityId: \"123\"",
+					"};",
+					"",
+					"for (const [key, value] of Object.entries(defaults)) {",
+					"  if (!pm.collectionVariables.get(key)) {",
+					"    pm.collectionVariables.set(key, value);",
+					"  }",
+					"}",
+					"",
+					"console.log(\"🧪 Current collection variables:\");",
+					"[\"newUserId\", \"newCityId\", \"newEventId\", \"newUserCityId\"].forEach(key => {",
+					"  console.log(`${key}:`, pm.collectionVariables.get(key));",
+					"});",
+					"",
+					"// Log request for debugging",
+					"console.log(`🚀 ${pm.request.method} ${pm.request.url.toString()}`);",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "cityId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "eventId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "newCityId",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"key": "newEventId",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"key": "newUserCityId",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"key": "newUserId",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1",
+			"type": "default"
+		}
+	]
+}
