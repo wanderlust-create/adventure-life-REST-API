@@ -107,7 +107,9 @@ To import:
 ---
 
 ## 🗘 Schema <a name="schema"></a>
-![csa-schema](https://user-images.githubusercontent.com/67713820/209966291-29992855-b2c0-4401-86ae-29720e39fb08.png)
+<p align="left">
+  <img src="./assets/adventure-life-schema.png" alt="AdventureLife Banner" width=600, height=400"/>
+</p>
 
 ---
 
